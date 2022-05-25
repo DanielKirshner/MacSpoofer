@@ -1,6 +1,7 @@
 from rich import print
 import getpass
 import random
+import sys
 
 
 VERSION = "0.0.0"
@@ -37,6 +38,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     try:
+        if check_for_admin() == False:
+            print("[bold red]Needs root.")
+            sys.exit(0)
         main()
     except KeyboardInterrupt:
         print("[bold red]\nStopped.")
