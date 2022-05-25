@@ -17,12 +17,20 @@ def print_title() -> None:
     )
 
 
-
 def check_for_admin() -> bool:
     return getpass.getuser() == 'root'
+
 
 def main() -> None:
     print_title()
 
+
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("[bold red]\nStopped.")
+    except ModuleNotFoundError:
+        print("[bold red]\nMissing one of the pip packages.")
+    except Exception:
+        print("[bold red]\nError occured.")
