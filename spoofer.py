@@ -1,4 +1,5 @@
 from rich import print
+import subprocess
 import getpass
 import random
 import sys
@@ -19,6 +20,16 @@ def generate_random_mac_address() -> str:
     return mac
 
 
+def set_interface_state(interface: str, state: str) -> None: # state = up/down
+    subprocess.call(['ip', 'link', 'set', 'dev', interface, state])
+
+
+def spoof_new_mac_address(interface: str, mac: str) -> None:
+    set_interface_state(interface, 'down') # turn off the interface - TODO: should warn the user before
+    subprocess.call(['ip', 'link', 'set', 'dev', interface, 'address', mac])
+    set_interface_state(interface, 'up') # turn it back on
+
+
 def print_title() -> None:
     print(
         "[bold green]"
@@ -32,19 +43,28 @@ def print_title() -> None:
 
 
 def main() -> None:
-    print_title()
-    print(generate_random_mac_address())
-
-
-if __name__ == "__main__":
+    if check_for_admin() == False:
+        print("[bold red]Needs root.")
+        sys.exit(0)
+    
+    if len(sys.argv) < 2:
+        print("[bold red]You must give the interface name as an argument\nAbort.")
+        sys.exit(0)
+    
     try:
-        if check_for_admin() == False:
-            print("[bold red]Needs root.")
-            sys.exit(0)
-        main()
+        print_title()
+        interface = sys.argv[1] # ---- TODO: check if there are more than one argument
+        new_mac = generate_random_mac_address()
+        print(new_mac)
+        # spoof_new_mac_address(interface, new_mac)
+
     except KeyboardInterrupt:
         print("[bold red]\nStopped.")
     except ModuleNotFoundError:
         print("[bold red]\nMissing one of the pip packages.")
     except Exception:
         print("[bold red]\nError occured.")
+
+
+if __name__ == "__main__":
+    main()
