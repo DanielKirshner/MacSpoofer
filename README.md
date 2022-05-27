@@ -65,4 +65,6 @@ https://github.com/wireshark/wireshark/blob/master/manuf - Wireshark known vendo
 - Windows Support (Using registry key values)
 - Mac OS support
 
-© 2022 Daniel Kirshner. All rights reserved.
+## License
+### MIT-License
+### © 2022 Daniel Kirshner. All rights reserved.
