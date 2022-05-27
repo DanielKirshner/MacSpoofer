@@ -32,6 +32,11 @@ git clone https://github.com/DanielKirshner/MacSpoofer
 ```
 cd MacSpoofer/
 ```
+- Install pip for python3
+```
+sudo apt-get update
+sudo apt-get install python3-pip
+```
 - Install pip prerequisites
 ```
 pip install -r requirements.txt
