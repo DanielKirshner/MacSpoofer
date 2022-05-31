@@ -70,6 +70,10 @@ def generate_random_vendor() -> str:
     return mac
 
 
+def get_random_vendor_from_list(vendors: list) -> str:
+    return random.choice(vendors)
+
+
 def choose_vendor():
     # let the user choose a known manufacture vendor / random / manually enter
     pass
