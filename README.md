@@ -17,6 +17,7 @@ Tested on:
 - Debian (8 - 11)
 - Raspbian (8 - 11)
 
+
 ## Setup
 
 - Install python 3 -> https://www.python.org/
@@ -41,6 +42,12 @@ sudo apt-get install python3-pip
 ```
 pip install -r requirements.txt
 ```
+- Install necessary linux packages
+```
+sudo apt-get install net-tools
+sudo apt-get install iproute2
+```
+
 
 ## Usage
 
@@ -48,10 +55,7 @@ pip install -r requirements.txt
 ```
 ifconfig -a
 ```
-- Note: if the `ifconfig` command is missing, you'll need to install `net-tools`:
-```
-sudo apt-get install net-tools
-```
+
 - Run the tool as administrator with your interface name as an argument:
 ```
 sudo python3 spoofer.py wlp03s
