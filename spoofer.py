@@ -95,6 +95,10 @@ def main() -> None:
     if len(sys.argv) < 2:
         print("[bold red]You must give the interface name as an argument\nAbort.")
         sys.exit(1)
+    
+    if len(sys.argv) > 2:
+        print("[bold red]Too many arguments given.\nAbort.")
+        sys.exit(1)
 
     try:
         print_title()
