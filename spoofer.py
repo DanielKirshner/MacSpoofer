@@ -105,12 +105,14 @@ def run_TUI(interface: str) -> None:
     mac = ""
     if vendor == VENDORS[0]:
         mac = generate_random_mac_address()
-    elif vendor == VENDORS[1]:
-        mac = get_random_vendor_from_list(SAMSUNG_VENDORS) + generate_random_6_hexs()
-    elif vendor == VENDORS[2]:
-        mac = get_random_vendor_from_list(APPLE_VENDORS) + generate_random_6_hexs()
-    elif vendor == VENDORS[3]:
-        mac = get_random_vendor_from_list(INTEL_VENDORS) + generate_random_6_hexs()
+    else:
+        if vendor == VENDORS[1]:
+            mac += get_random_vendor_from_list(SAMSUNG_VENDORS)
+        elif vendor == VENDORS[2]:
+            mac += get_random_vendor_from_list(APPLE_VENDORS)
+        elif vendor == VENDORS[3]:
+            mac += get_random_vendor_from_list(INTEL_VENDORS)
+        mac = mac + ':' + generate_random_6_hexs()
     
     print(f"Spoofing your interface {interface} mac to {mac}")
     spoof_new_mac_address(interface, mac)
