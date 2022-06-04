@@ -7,6 +7,7 @@ import sys
 
 # ------ Constants ------
 VERSION = '0.0.0'
+VENDORS = ['Total Random', 'Samsung', 'Apple', 'Intel']
 
 # ------- Vendors -------
 SAMSUNG_VENDORS = [
@@ -62,7 +63,7 @@ def spoof_new_mac_address(interface: str, mac: str) -> None:
     set_interface_state(interface, 'up')  # turn it back on
 
 
-def generate_random_vendor() -> str:
+def generate_random_6_hexs() -> str:
     mac = ''
     for i in range(6):
         mac += hex(random.randint(0, 16))[-1].lower()
@@ -74,9 +75,15 @@ def get_random_vendor_from_list(vendors: list) -> str:
     return random.choice(vendors)
 
 
-def choose_vendor():
-    # let the user choose a known manufacture vendor / random / manually enter
-    pass
+def choose_vendor() -> str:
+    print_options = ''
+    for i in range(len(VENDORS)):
+        print_options += f"[bold green][{i}] [cyan]{VENDORS[i]}\n"
+    print(f"[bold magenta]Enter your choice:\n\n{print_options}")
+    user_choice = str(input('-> ').strip())
+    while user_choice.isnumeric() == False or int(user_choice) >= len(VENDORS):
+        user_choice = str(input('Invalid choice, try again-> ').strip())
+    return VENDORS[int(user_choice)]
 
 
 def print_title() -> None:
@@ -89,6 +96,25 @@ def print_title() -> None:
         "|___/ .__/ \___/ \___/|_|  \___|_|\n"
         f"    |_|\t\t\t[italic green]{VERSION}\n"
     )
+
+
+def run_TUI(interface: str) -> None:
+    print_title()
+    vendor = choose_vendor()
+    print("Generating random mac according to your request...")
+    mac = ""
+    if vendor == VENDORS[0]:
+        mac = generate_random_mac_address()
+    elif vendor == VENDORS[1]:
+        mac = get_random_vendor_from_list(SAMSUNG_VENDORS) + generate_random_6_hexs()
+    elif vendor == VENDORS[2]:
+        mac = get_random_vendor_from_list(APPLE_VENDORS) + generate_random_6_hexs()
+    elif vendor == VENDORS[3]:
+        mac = get_random_vendor_from_list(INTEL_VENDORS) + generate_random_6_hexs()
+    
+    print(f"Spoofing your interface {interface} mac to {mac}")
+    spoof_new_mac_address(interface, mac)
+    print(f"Done.")
 
 
 def main() -> None:
@@ -105,12 +131,7 @@ def main() -> None:
         sys.exit(1)
 
     try:
-        print_title()
-        # ---- TODO: check if there are more than one argument
-        interface = sys.argv[1]
-        new_mac = generate_random_mac_address()
-        print(new_mac)
-        # spoof_new_mac_address(interface, new_mac)
+        run_TUI(sys.argv[1])
 
     except KeyboardInterrupt:
         print("[bold red]\nStopped.")
