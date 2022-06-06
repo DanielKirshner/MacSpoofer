@@ -1,3 +1,4 @@
+from time import sleep
 from rich import print
 import subprocess
 import getpass
@@ -57,10 +58,18 @@ def set_interface_state(interface: str, state: str) -> None:  # state = up/down
 
 
 def spoof_new_mac_address(interface: str, mac: str) -> None:
-    # turn off the interface - TODO: should warn the user before
+    print(f"[bold yellow]About to turn {interface} DOWN.")
+    input("Press Enter to continue or Ctrl+C to terminate -> ")
+    print(f"\n[bold yellow]Turning {interface} OFF...")
+    sleep(1)
     set_interface_state(interface, 'down')
+    print(f"[bold yellow]Spoofing {interface} mac...")
+    sleep(1)
     subprocess.call(['ip', 'link', 'set', 'dev', interface, 'address', mac])
-    set_interface_state(interface, 'up')  # turn it back on
+    sleep(1)
+    print(f"[bold yellow]Turning {interface} back ON...")
+    sleep(1)
+    set_interface_state(interface, 'up')
 
 
 def generate_random_6_hexs() -> str:
@@ -101,7 +110,8 @@ def print_title() -> None:
 def run_TUI(interface: str) -> None:
     print_title()
     vendor = choose_vendor()
-    print("Generating random mac according to your request...")
+    print("Generating random mac according to your request...\n")
+    sleep(1)
     mac = ""
     if vendor == VENDORS[0]:
         mac = generate_random_mac_address()
@@ -114,7 +124,8 @@ def run_TUI(interface: str) -> None:
             mac += get_random_vendor_from_list(INTEL_VENDORS)
         mac = mac + ':' + generate_random_6_hexs()
     
-    print(f"Spoofing your interface {interface} mac to {mac}")
+    print(f"Spoofing your interface {interface} mac to {mac}\n")
+    sleep(1)
     spoof_new_mac_address(interface, mac)
     print(f"Done.")
 
