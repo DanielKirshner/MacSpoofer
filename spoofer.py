@@ -8,7 +8,7 @@ import sys
 
 # ------ Constants ------
 VERSION = '0.0.1'
-VENDORS = ['Total Random', 'Samsung', 'Apple', 'Intel', 'Microsoft']
+VENDORS = ['Total Random', 'Samsung', 'Apple', 'Intel', 'Microsoft', 'Huawei']
 
 # ------- Vendors -------
 SAMSUNG_VENDORS = [
@@ -43,9 +43,16 @@ MICROSOFT_VENDORS = [
     '84:57:33', '84:63:d6', '90:6a:eb', '94:9a:a9', '98:5f:d3', '98:7a:14', '9c:6c:15', '9c:aa:1b',
     'a8:8c:3e', 'b8:31:b5', 'b8:4f:d5', 'bc:83:85', 'c4:9d:ed', 'c8:3f:26', 'c8:96:65', 'ca:12:5c',
     'd4:8f:33', 'd8:e2:df', 'dc:98:40', 'e4:2a:ac', 'e8:a7:2f', 'ec:59:e7', 'ec:83:50', 'f0:1d:bc',
- ]
+]
 
-# HUAWEI_VENDORS = []
+HUAWEI_VENDORS = [
+    '00:18:82', '00:34:fe', '00:66:4b', '00:e0:fc', '04:25:c5', '04:75:03', '04:b0:e7', '04:e7:95',
+    '08:19:a6', '08:63:61', '08:c0:21', '0c:31:dc', '0c:70:4a', '0c:c6:cc', '10:32:1d', '10:a4:da',
+    '14:09:dc', '14:46:58', '14:89:cb', '14:ab:02', '18:02:2d', '18:cf:24', '1c:1d:67', '1c:59:9b',
+    '1c:a6:81', '20:08:ed', '20:53:83', '20:a6:80', '20:f3:a3', '24:26:d6', '24:4c:07', '24:9e:ab',
+    '24:df:6a', '28:17:09', '28:53:4e', '28:a6:db', '28:fb:ae', '2c:55:d3', '2c:ab:00', '30:74:96',
+    '30:e9:8e', '34:0a:98', '34:58:40', '34:b3:54', '38:4c:4f', '38:f8:89', '3c:54:47', '3c:9d:56', 
+]
 # GOOGLE_VENDORS = []
 
 
@@ -132,8 +139,10 @@ def run_TUI(interface: str) -> None:
             mac += get_random_vendor_from_list(INTEL_VENDORS)
         elif vendor == VENDORS[4]:
             mac += get_random_vendor_from_list(MICROSOFT_VENDORS)
+        elif vendor == VENDORS[5]:
+            mac += get_random_vendor_from_list(HUAWEI_VENDORS)
         mac = mac + ':' + generate_random_6_hexs()
-    
+
     print(f"Spoofing your interface {interface} mac to {mac}\n")
     sleep(1)
     spoof_new_mac_address(interface, mac)
@@ -148,7 +157,7 @@ def main() -> None:
     if len(sys.argv) < 2:
         print("[bold red]You must give the interface name as an argument\nAbort.")
         sys.exit(1)
-    
+
     if len(sys.argv) > 2:
         print("[bold red]Too many arguments given.\nAbort.")
         sys.exit(1)
