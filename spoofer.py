@@ -8,7 +8,7 @@ import sys
 
 # ------ Constants ------
 VERSION = '0.0.1'
-VENDORS = ['Total Random', 'Samsung', 'Apple', 'Intel', 'Microsoft', 'Huawei']
+VENDORS = ['Total Random', 'Samsung', 'Apple', 'Intel', 'Microsoft', 'Huawei', 'Google']
 
 # ------- Vendors -------
 SAMSUNG_VENDORS = [
@@ -19,6 +19,7 @@ SAMSUNG_VENDORS = [
     'dc:cc:e6', 'dc:cf:96', 'dc:dc:e2', 'dc:f7:56', 'e0:03:6b', 'e0:99:71', 'e0:9d:13', 'e0:aa:96',
     '78:00:9e', '78:1f:db', '78:23:27', '78:25:ad', '78:37:16', '78:40:e4', '78:46:d4', '78:47:1d'
 ]
+
 APPLE_VENDORS = [
     'f8:10:93', 'f8:1e:df', 'f8:27:93', 'f8:2d:7c', 'f8:38:80', 'f8:4d:89', 'f8:4e:73', 'f8:62:14',
     'f8:66:5a', 'f8:6f:c1', 'e4:b2:fb', 'e4:c6:3d', 'e4:ce:8f', 'e4:e0:a6', 'e4:e4:ab', 'e8:04:0b',
@@ -27,6 +28,7 @@ APPLE_VENDORS = [
     'dc:37:14', 'dc:41:5f', 'dc:52:85', 'dc:53:92', 'dc:56:e7', 'dc:80:84', 'dc:86:d8', 'dc:9b:9c',
     '5c:97:f3', '5c:ad:cf', '5c:e9:1e', '5c:f5:da', '5c:f7:e6', '5c:f9:38', '60:03:08', '60:06:e3'
 ]
+
 INTEL_VENDORS = [
     '00:d7:6d', '00:db:df', '00:e1:8c', '04:33:c2', '04:56:e5', '04:6c:59', '04:cf:4b', '04:d3:b0',
     '04:e8:b9', '04:ea:56', '04:ec:d8', '04:ed:33', '08:11:96', '08:5b:d6', '08:6a:c5', '08:71:90',
@@ -51,9 +53,17 @@ HUAWEI_VENDORS = [
     '14:09:dc', '14:46:58', '14:89:cb', '14:ab:02', '18:02:2d', '18:cf:24', '1c:1d:67', '1c:59:9b',
     '1c:a6:81', '20:08:ed', '20:53:83', '20:a6:80', '20:f3:a3', '24:26:d6', '24:4c:07', '24:9e:ab',
     '24:df:6a', '28:17:09', '28:53:4e', '28:a6:db', '28:fb:ae', '2c:55:d3', '2c:ab:00', '30:74:96',
-    '30:e9:8e', '34:0a:98', '34:58:40', '34:b3:54', '38:4c:4f', '38:f8:89', '3c:54:47', '3c:9d:56', 
+    '30:e9:8e', '34:0a:98', '34:58:40', '34:b3:54', '38:4c:4f', '38:f8:89', '3c:54:47', '3c:9d:56',
 ]
-# GOOGLE_VENDORS = []
+
+GOOGLE_VENDORS = [
+    '00:1a:11', '00:f6:20', '08:9e:08', '14:22:3b', '08:b4:b1', '1c:f2:9a', '20:1f:3b', '20:df:b9',
+    '24:05:88', '24:29:34', '28:bd:89', '30:fd:38', '38:86:f7', '38:8b:59', '3c:28:6d', '3c:5a:b4',
+    '3c:8d:20', '44:07:0b', '44:bb:3b', '48:d6:d5', '54:60:09', '58:24:29', '58:cb:52', '60:b7:6e',
+    '70:3a:cb', '74:74:46', '7c:2e:bd', '7c:d9:5c', '88:3d:24', '88:54:1f', '90:0c:c8', '90:ca:fa',
+    '94:eb:2c', '98:d2:93', '9c:4f:5f', 'a4:77:33', 'ac:67:84', 'b0:2a:43', 'b0:6a:41', 'b0:e4:d5',
+    'd8:eb:46', 'da:a1:19', 'dc:e5:5b', 'e4:5e:1b', 'e4:f0:42', 'f0:5c:77', 'f0:72:ea', 'f0:ef:86',
+]
 
 
 def check_for_admin() -> bool:
@@ -141,6 +151,8 @@ def run_TUI(interface: str) -> None:
             mac += get_random_vendor_from_list(MICROSOFT_VENDORS)
         elif vendor == VENDORS[5]:
             mac += get_random_vendor_from_list(HUAWEI_VENDORS)
+        elif vendor == VENDORS[6]:
+            mac += get_random_vendor_from_list(GOOGLE_VENDORS)
         mac = mac + ':' + generate_random_6_hexs()
 
     print(f"Spoofing your interface {interface} mac to {mac}\n")
