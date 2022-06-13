@@ -7,7 +7,7 @@ import sys
 
 
 # ------ Constants ------
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 VENDORS = ['Total Random', 'Samsung', 'Apple', 'Intel', 'Microsoft', 'Huawei', 'Google']
 
 # ------- Vendors -------
@@ -79,7 +79,11 @@ def generate_random_mac_address() -> str:
 
 
 def set_interface_state(interface: str, state: str) -> None:  # state = up/down
-    subprocess.call(['ip', 'link', 'set', 'dev', interface, state])
+    return_code = subprocess.call(['ip', 'link', 'set', 'dev', interface, state])
+    if return_code != 0:
+        print(f"[bold red]Failed setting {interface} {state}.\nAbort.")
+        sys.exit(1)
+
 
 
 def spoof_new_mac_address(interface: str, mac: str) -> None:
@@ -90,7 +94,9 @@ def spoof_new_mac_address(interface: str, mac: str) -> None:
     set_interface_state(interface, 'down')
     print(f"[bold yellow]Spoofing {interface} mac...")
     sleep(1)
-    subprocess.call(['ip', 'link', 'set', 'dev', interface, 'address', mac])
+    return_code = subprocess.call(['ip', 'link', 'set', 'dev', interface, 'address', mac])
+    if return_code != 0:
+            print(f"[bold red]Failed spoofing {interface} mac address to {mac}.")
     sleep(1)
     print(f"[bold yellow]Turning {interface} back ON...")
     sleep(1)
