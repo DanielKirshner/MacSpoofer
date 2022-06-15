@@ -20,18 +20,20 @@ Tested on:
 
 ## Setup
 
-- Install python 3 -> https://www.python.org/
-- Make sure you are using python 3.8+
-```
-python3 --version
-```
 - Download my project:
 ```
 git clone https://github.com/DanielKirshner/MacSpoofer
 ```
-- Navigate to the folder created:
+You can run my setup automation script:
 ```
-cd MacSpoofer/
+chmod +x setup.sh
+sudo ./setup.sh
+```
+Or you can do it by yourself:
+- Install python 3 -> https://www.python.org/
+- Make sure you are using python 3.8+
+```
+python3 --version
 ```
 - Install pip for python3
 ```
