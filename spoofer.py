@@ -8,7 +8,7 @@ import sys
 
 # ------ Constants ------
 VERSION = '0.0.2'
-VENDORS = ['Total Random', 'Samsung', 'Apple', 'Intel', 'Microsoft', 'Huawei', 'Google']
+VENDORS = ['Total Random', 'Samsung', 'Apple', 'Intel', 'Microsoft', 'Huawei', 'Google', 'Cisco']
 
 # ------- Vendors -------
 SAMSUNG_VENDORS = [
@@ -63,6 +63,15 @@ GOOGLE_VENDORS = [
     '70:3a:cb', '74:74:46', '7c:2e:bd', '7c:d9:5c', '88:3d:24', '88:54:1f', '90:0c:c8', '90:ca:fa',
     '94:eb:2c', '98:d2:93', '9c:4f:5f', 'a4:77:33', 'ac:67:84', 'b0:2a:43', 'b0:6a:41', 'b0:e4:d5',
     'd8:eb:46', 'da:a1:19', 'dc:e5:5b', 'e4:5e:1b', 'e4:f0:42', 'f0:5c:77', 'f0:72:ea', 'f0:ef:86',
+]
+
+CISCO_VENDORS = [
+    '08:ec:f5', '08:f3:fb', '0c:11:67', '0c:27:24', '0c:68:03', '0c:75:bd', '0c:85:25', '0c:d0:f8',
+    '10:06:ed', '10:8c:cf', '10:b3:c6', '10:b3:d5', '10:b3:d6', '10:bd:18', '10:f3:11', '10:f9:20',
+    '14:16:9d', '14:a2:a0', '18:33:9d', '18:59:f5', '18:80:90', '18:8b:45', '18:8b:9d', '18:9c:5d',
+    '18:e7:28', '18:ef:63', '1c:17:d3', '1c:1d:86', '1c:6a:7a', '1c:aa:07', '1c:d1:e0', '1c:de:a7',
+    '1c:e8:5d', '20:37:06', '20:3a:07', '20:4c:9e', '20:bb:c0', '20:cf:ae', '24:01:c7', '24:16:9d',
+    '24:7e:12', '24:81:3b', '24:b6:57', '24:e9:b3', '24:36:da', '28:34:a2', '28:52:61', '28:6f:7f',
 ]
 
 
@@ -159,6 +168,8 @@ def run_TUI(interface: str) -> None:
             mac += get_random_vendor_from_list(HUAWEI_VENDORS)
         elif vendor == VENDORS[6]:
             mac += get_random_vendor_from_list(GOOGLE_VENDORS)
+        elif vendor == VENDORS[7]:
+            mac += get_random_vendor_from_list(CISCO_VENDORS)
         mac = mac + ':' + generate_random_6_hexs()
 
     print(f"Spoofing your interface {interface} mac to {mac}\n")
