@@ -30,7 +30,7 @@ chmod +x setup.sh
 sudo ./setup.sh
 ```
 Or you can do it by yourself:
-- Install python 3 -> https://www.python.org/
+- Install [python 3](https://www.python.org/)
 - Make sure you are using python 3.8+
 ```
 python3 --version
@@ -64,9 +64,9 @@ sudo python3 spoofer.py wlp03s
 ```
 
 ## Other tools
-Mac vendor lookup API - https://macvendors.com/
+* [Mac vendor lookup API](https://macvendors.com/)
 
-Wireshark known vendors "manuf" file - https://github.com/wireshark/wireshark/blob/master/manuf
+* [Wireshark known vendors "manuf" file](https://github.com/wireshark/wireshark/blob/master/manuf)
 
 ## Future updates
 - Windows Support (Using registry key values)
