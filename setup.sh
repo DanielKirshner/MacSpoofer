@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Check for administrative privileges
 if [[ $EUID -ne 0 ]]; then
