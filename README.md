@@ -46,8 +46,7 @@ pip install -r requirements.txt
 ```
 - Install necessary linux packages
 ```
-sudo apt-get install net-tools
-sudo apt-get install iproute2
+sudo apt-get install -y net-tools iproute2
 ```
 
 
