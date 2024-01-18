@@ -113,7 +113,7 @@ def run_tui(interface: str) -> None:
 
 class ArgsIndex(Enum):
     INTERFACE = auto()
-    LENGTH = auto()
+    EXPECTED_LENGTH = auto()
 
 
 def main() -> None:
@@ -122,7 +122,7 @@ def main() -> None:
             print("[bold red]Needs root.")
             return
         
-        if len(sys.argv) < ArgsIndex.LENGTH.value:
+        if len(sys.argv) < ArgsIndex.EXPECTED_LENGTH.value:
             print("[bold red]Missing arguments.\nAbort.")
             return
 
