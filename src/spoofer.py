@@ -1,7 +1,7 @@
 from vendors import *
-
-from time import sleep
 from rich import print
+from enum import Enum, auto
+from time import sleep
 import subprocess
 import getpass
 import random
@@ -80,7 +80,7 @@ def print_title() -> None:
     )
 
 
-def run_TUI(interface: str) -> None:
+def run_tui(interface: str) -> None:
     print_title()
     vendor = choose_vendor()
     print("Generating random mac according to your request...\n")
@@ -111,23 +111,28 @@ def run_TUI(interface: str) -> None:
     print(f"Done.")
 
 
+class ArgsIndex(Enum):
+    INTERFACE = auto()
+    LENGTH = auto()
+
+
 def main() -> None:
     try:
         if check_for_admin() == False:
             print("[bold red]Needs root.")
             return
-
-        if len(sys.argv) != 2:
-            print("[bold red]Invalid number of arguments given.\nAbort.")
+        
+        if len(sys.argv) < ArgsIndex.LENGTH.value:
+            print("[bold red]Missing arguments.\nAbort.")
             return
 
-        run_TUI(sys.argv[1])
+        run_tui(sys.argv[ArgsIndex.INTERFACE.value])
     except KeyboardInterrupt:
         print("[bold red]\nStopped.")
     except ModuleNotFoundError:
         print("[bold red]\nMissing one of the pip packages.")
     except Exception:
-        print("[bold red]\nError occured.")
+        print("[bold red]\nError occurred.")
 
 
 if __name__ == "__main__":
