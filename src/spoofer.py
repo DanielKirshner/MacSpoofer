@@ -112,21 +112,16 @@ def run_TUI(interface: str) -> None:
 
 
 def main() -> None:
-    # if check_for_admin() == False:
-    #     print("[bold red]Needs root.")
-    #     sys.exit(1)
-
-    if len(sys.argv) < 2:
-        print("[bold red]You must give the interface name as an argument\nAbort.")
-        sys.exit(1)
-
-    if len(sys.argv) > 2:
-        print("[bold red]Too many arguments given.\nAbort.")
-        sys.exit(1)
-
     try:
-        run_TUI(sys.argv[1])
+        if check_for_admin() == False:
+            print("[bold red]Needs root.")
+            return
 
+        if len(sys.argv) != 2:
+            print("[bold red]Invalid number of arguments given.\nAbort.")
+            return
+
+        run_TUI(sys.argv[1])
     except KeyboardInterrupt:
         print("[bold red]\nStopped.")
     except ModuleNotFoundError:
