@@ -45,7 +45,7 @@ def spoof_new_mac_address(interface: str, mac: str) -> None:
     set_interface_state(interface, 'up')
 
 
-def generate_random_6_hexs() -> str:
+def generate_random_6_hex_values() -> str:
     mac = ''
     for i in range(6):
         mac += hex(random.randint(0, 16))[-1].lower()
@@ -103,7 +103,7 @@ def run_tui(interface: str) -> None:
             mac += get_random_vendor_from_list(GOOGLE_VENDORS)
         elif vendor == VENDORS[7]:
             mac += get_random_vendor_from_list(CISCO_VENDORS)
-        mac = mac + ':' + generate_random_6_hexs()
+        mac += ':' + generate_random_6_hex_values()
 
     print(f"Spoofing your interface {interface} mac to {mac}\n")
     sleep(1)
