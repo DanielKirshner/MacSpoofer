@@ -2,8 +2,8 @@ from enum import Enum
 import random
 
 class HexValuesLength(Enum):
-    MAC_ADDRESS = 12,
-    OUI = 6,
+    MAC_ADDRESS = 12
+    OUI = 6
     NIC = 6
 
 
@@ -27,6 +27,3 @@ def generate_hex_values_delimited_by_dotted(hex_values_to_generate: HexValuesLen
     mac = MAC_DELIMITER.join([mac[i:i + 2] for i in range(0, len(mac), 2)])
     
     return mac
-
-
-print(generate_hex_values_delimited_by_dotted(HexValuesLength.MAC_ADDRESS))
