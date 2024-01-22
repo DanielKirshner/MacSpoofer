@@ -1,15 +1,11 @@
 from vendors import *
+import shell_utils
 from rich import print
 from enum import Enum, auto
 from time import sleep
 import subprocess
-import getpass
 import random
 import sys
-
-
-def check_for_admin() -> bool:
-    return getpass.getuser() == 'root'
 
 
 def generate_random_mac_address() -> str:
@@ -22,10 +18,9 @@ def generate_random_mac_address() -> str:
 
 def set_interface_state(interface: str, state: str) -> None:  # state = up/down
     return_code = subprocess.call(['ip', 'link', 'set', 'dev', interface, state])
-    if return_code != 0:
+    if return_code != 0: # TODO: add shell utils to run command (params = command, expected_return_code)
         print(f"[bold red]Failed setting {interface} {state}.\nAbort.")
         sys.exit(1)
-
 
 
 def spoof_new_mac_address(interface: str, mac: str) -> None:
@@ -115,18 +110,21 @@ class ArgsIndex(Enum):
     INTERFACE = auto()
     EXPECTED_LENGTH = auto()
 
+def run_spoofer_logic() -> None:
+    if shell_utils.check_for_admin() == False:
+        print("[bold red]Needs root.")
+        return
+        
+    if len(sys.argv) < ArgsIndex.EXPECTED_LENGTH.value:
+        print("[bold red]Missing arguments.\nAbort.")
+        return
+
+    run_tui(sys.argv[ArgsIndex.INTERFACE.value])
+
 
 def main() -> None:
     try:
-        if check_for_admin() == False:
-            print("[bold red]Needs root.")
-            return
-        
-        if len(sys.argv) < ArgsIndex.EXPECTED_LENGTH.value:
-            print("[bold red]Missing arguments.\nAbort.")
-            return
-
-        run_tui(sys.argv[ArgsIndex.INTERFACE.value])
+        run_spoofer_logic()
     except KeyboardInterrupt:
         print("[bold red]\nStopped.")
     except ModuleNotFoundError:
