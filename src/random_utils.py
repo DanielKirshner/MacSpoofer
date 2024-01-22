@@ -1,3 +1,4 @@
+from typing import List
 from enum import Enum
 import random
 
@@ -7,6 +8,7 @@ class HexValuesLength(Enum):
     NIC = 6
 
 
+@staticmethod
 def generate_hex_values_delimited_by_dotted(hex_values_to_generate: HexValuesLength) -> str:
     """
         Return a random string of hex values delimited by dotted,
@@ -27,3 +29,7 @@ def generate_hex_values_delimited_by_dotted(hex_values_to_generate: HexValuesLen
     mac = MAC_DELIMITER.join([mac[i:i + 2] for i in range(0, len(mac), 2)])
     
     return mac
+
+
+def get_random_vendor_from_list(vendors: List[str]) -> str:
+    return random.choice(vendors)

@@ -6,7 +6,6 @@ from enum import Enum, auto
 from rich import print
 from time import sleep
 import subprocess
-import random
 import sys
 
 
@@ -32,10 +31,6 @@ def spoof_new_mac_address(interface: str, mac: str) -> None:
     print(f"[bold yellow]Turning {interface} back ON...")
     sleep(1)
     set_interface_state(interface, 'up')
-
-
-def get_random_vendor_from_list(vendors: list) -> str:
-    return random.choice(vendors)
 
 
 def choose_vendor() -> str:
