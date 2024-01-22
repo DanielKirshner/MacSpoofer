@@ -1,19 +1,13 @@
+from random_utils import *
 from vendors import *
 import shell_utils
-from rich import print
+
 from enum import Enum, auto
+from rich import print
 from time import sleep
 import subprocess
 import random
 import sys
-
-
-def generate_random_mac_address() -> str:
-    mac = ''
-    for i in range(12):
-        mac += hex(random.randint(0, 16))[-1].lower()
-    mac = ':'.join([mac[i:i + 2] for i in range(0, len(mac), 2)])
-    return mac
 
 
 def set_interface_state(interface: str, state: str) -> None:  # state = up/down
@@ -38,14 +32,6 @@ def spoof_new_mac_address(interface: str, mac: str) -> None:
     print(f"[bold yellow]Turning {interface} back ON...")
     sleep(1)
     set_interface_state(interface, 'up')
-
-
-def generate_random_6_hex_values() -> str:
-    mac = ''
-    for i in range(6):
-        mac += hex(random.randint(0, 16))[-1].lower()
-    mac = ':'.join([mac[i:i + 2] for i in range(0, len(mac), 2)])
-    return mac
 
 
 def get_random_vendor_from_list(vendors: list) -> str:
@@ -82,7 +68,7 @@ def run_tui(interface: str) -> None:
     sleep(1)
     mac = ""
     if vendor == VENDORS[0]:
-        mac = generate_random_mac_address()
+        mac = generate_hex_values_delimited_by_dotted(HexValuesLength.MAC_ADDRESS)
     else:
         if vendor == VENDORS[1]:
             mac += get_random_vendor_from_list(SAMSUNG_VENDORS)
@@ -98,7 +84,7 @@ def run_tui(interface: str) -> None:
             mac += get_random_vendor_from_list(GOOGLE_VENDORS)
         elif vendor == VENDORS[7]:
             mac += get_random_vendor_from_list(CISCO_VENDORS)
-        mac += ':' + generate_random_6_hex_values()
+        mac += ':' + generate_hex_values_delimited_by_dotted(HexValuesLength.NIC)
 
     print(f"Spoofing your interface {interface} mac to {mac}\n")
     sleep(1)
