@@ -6,7 +6,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-REQUIRED_PACKAGES="git python3-pip net-tools iproute2"
+REQUIRED_PACKAGES="python3-pip net-tools iproute2"
 
 echo "Running setup for spoofer"
 apt-get update -qq -y
