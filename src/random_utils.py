@@ -31,5 +31,6 @@ def generate_hex_values_delimited_by_dotted(hex_values_to_generate: HexValuesLen
     return mac
 
 
+@staticmethod
 def get_random_vendor_from_list(vendors: List[str]) -> str:
     return random.choice(vendors)
