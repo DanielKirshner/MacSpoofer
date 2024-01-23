@@ -20,35 +20,10 @@ Tested on:
 
 ## Setup
 
-- Download my project:
-```
-git clone https://github.com/DanielKirshner/MacSpoofer
-```
-You can run my setup automation script:
 ```
 chmod +x setup.sh
 sudo ./setup.sh
 ```
-Or you can do it by yourself:
-- Install [python 3](https://www.python.org/)
-- Make sure you are using python 3.8+
-```
-python3 --version
-```
-- Install pip for python3
-```
-sudo apt-get update
-sudo apt-get install python3-pip
-```
-- Install pip prerequisites
-```
-pip install -r requirements.txt
-```
-- Install necessary linux packages
-```
-sudo apt-get install -y net-tools iproute2
-```
-
 
 ## Usage
 
@@ -69,8 +44,7 @@ sudo python3 spoofer.py wlp03s
 
 ## Future updates
 - Windows Support (Using registry key values)
-- Mac OS support
 
 ## License
 ### MIT-License
-### © 2022 Daniel Kirshner. All rights reserved.
+### © 2024 Daniel Kirshner. All rights reserved.
