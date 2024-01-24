@@ -7,4 +7,4 @@ RUN apt-get update -qq -y && \
 
 RUN mkdir -pv /spoofer_workspace
 
-COPY ./src /spoofer_workspace
+COPY ./* /spoofer_workspace
