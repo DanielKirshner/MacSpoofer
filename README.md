@@ -41,9 +41,7 @@ sudo python3 spoofer.py wlp03s
 * [Mac vendor lookup API](https://macvendors.com/)
 
 * [Wireshark known vendors "manuf" file](https://github.com/wireshark/wireshark/blob/master/manuf)
-
-## Future updates
-- Windows Support (Using registry key values)
+    * Feel free to add more known manufactures to 'vendors.py'
 
 ## License
 ### MIT-License
