@@ -6,6 +6,7 @@ CheckCommand()
    if [ $? -ne 0 ]; then
       echo "Error occured. Aborting."
       exit 1
+   fi
 }
 
 CheckForSudo()
@@ -29,15 +30,18 @@ InstallRequiredPackages()
 
 InstallRequiredPipPackages()
 {
-   CheckCommand pip install -r requirements.txt
+   CheckCommand pip install -r -q requirements.txt
 }
 
 Main()
 {
    echo "Running setup for spoofer"
    CheckForSudo
+   echo "-> Updating apt repo..."
    UpdateApt
+   echo "-> Installing apt packages..."
    InstallRequiredPackages
+   echo "-> Installing pip packages..."
    InstallRequiredPipPackages
    echo "Setup completed successfully!"
 }
