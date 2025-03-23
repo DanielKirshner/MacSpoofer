@@ -45,4 +45,4 @@ sudo python3 spoofer.py wlp03s
 
 ## License
 ### MIT-License
-### © 2024 Daniel Kirshner. All rights reserved.
+### © 2022-2025 Daniel Kirshner. All rights reserved.
