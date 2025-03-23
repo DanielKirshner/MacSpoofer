@@ -30,7 +30,7 @@ InstallRequiredPackages()
 
 InstallRequiredPipPackages()
 {
-   CheckCommand pip install -r -q requirements.txt
+   CheckCommand pip install -q --break-system-packages -r requirements.txt
 }
 
 Main()
