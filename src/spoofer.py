@@ -111,12 +111,25 @@ def main() -> None:
         print("[bold red]\nError occurred.")
 
 
+def generate_safe_mac() -> str:
+    import random
+    def rand_byte():
+        return random.randint(0x00, 0xFF)
+
+    first_byte = rand_byte()
+    # Force: unicast (bit 0 = 0) and locally administered (bit 1 = 1)
+    first_byte = (first_byte & 0b11111100) | 0b00000010
+
+    mac = [first_byte] + [rand_byte() for _ in range(5)]
+    return ':'.join(f"{b:02x}" for b in mac)
+
+
 if __name__ == "__main__":
     # If --ci is passed, run with test vendor + skip prompts
     if "--ci" in sys.argv:
         interface = sys.argv[1]
-        test_mac = generate_hex_values_delimited_by_dotted(HexValuesLength.MAC_ADDRESS)
-        print(f"[CI] Spoofing {interface} to {test_mac}")
-        spoof_new_mac_address(interface, test_mac, confirm=False)
+        unicast_mac_for_virtual_dummy_interface = generate_safe_mac() 
+        print(f"[CI] Spoofing {interface} to {unicast_mac_for_virtual_dummy_interface}")
+        spoof_new_mac_address(interface, unicast_mac_for_virtual_dummy_interface, confirm=False)
     else:
         main()
