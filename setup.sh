@@ -4,7 +4,7 @@ CheckCommand()
 {
    $*
    if [ $? -ne 0 ]; then
-      echo "Error occured. Aborting."
+      echo "Error occurred. Aborting."
       exit 1
    fi
 }
