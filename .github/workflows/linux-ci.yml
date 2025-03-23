@@ -35,11 +35,15 @@ jobs:
 
       - name: Verify MAC change
         run: |
+          OLD_MAC=$(ip link show wlan0 | awk '/ether/ {print $2}')
+          echo "Old MAC: $OLD_MAC"
+          sudo python3 ./src/spoofer.py wlan0
           NEW_MAC=$(ip link show wlan0 | awk '/ether/ {print $2}')
-          echo "Spoofed MAC: $NEW_MAC"
-          if [[ "$NEW_MAC" == "02:00:00:00:00:00" ]]; then
+          echo "New MAC: $NEW_MAC"
+
+          if [[ "$NEW_MAC" == "$OLD_MAC" ]]; then
             echo "MAC was not changed!"
             exit 1
           else
-            echo "MAC spoof successful"
+            echo "MAC spoof successful ✅"
           fi
