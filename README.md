@@ -1,4 +1,5 @@
 # Mac Address Spoofer Tool
+![CI (master)](https://github.com/DanielKirshner/MacSpoofer/actions/workflows/linux-ci.yml/badge.svg?branch=master)
 
 ## What is a mac address?
 A media access control address is a unique identifier assigned to a network interface controller for use as a network address in communications within a network segment. This use is common in most IEEE 802 networking technologies, including Ethernet, Wi-Fi, and Bluetooth.

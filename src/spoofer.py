@@ -117,6 +117,5 @@ if __name__ == "__main__":
         unicast_mac_virtual_interface = generate_safe_mac() 
         print(f"[CI] Spoofing {interface} to {unicast_mac_virtual_interface}")
         spoof_new_mac_address(interface, unicast_mac_virtual_interface, user_confirm_iw_down=False)
-        return
-    
-    main()
+    else:
+        main()
