@@ -115,4 +115,11 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    # If --ci is passed, run with test vendor + skip prompts
+    if "--ci" in sys.argv:
+        interface = sys.argv[1]
+        test_mac = generate_hex_values_delimited_by_dotted(HexValuesLength.MAC_ADDRESS)
+        print(f"[CI] Spoofing {interface} to {test_mac}")
+        spoof_new_mac_address(interface, test_mac)
+    else:
+        main()
