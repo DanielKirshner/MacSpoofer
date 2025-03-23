@@ -16,9 +16,9 @@ def set_interface_state(interface: str, state: str) -> None:  # state = up/down
         sys.exit(1)
 
 
-def spoof_new_mac_address(interface: str, mac: str, confirm: bool = True) -> None:
+def spoof_new_mac_address(interface: str, mac: str, user_confirm_iw_down: bool = True) -> None:
     print(f"[bold yellow]About to turn {interface} DOWN.")
-    if confirm:
+    if user_confirm_iw_down:
         input("Press Enter to continue or Ctrl+C to terminate -> ")
     print(f"\n[bold yellow]Turning {interface} OFF...")
     sleep(1)
@@ -111,25 +111,12 @@ def main() -> None:
         print("[bold red]\nError occurred.")
 
 
-def generate_safe_mac() -> str:
-    import random
-    def rand_byte():
-        return random.randint(0x00, 0xFF)
-
-    first_byte = rand_byte()
-    # Force: unicast (bit 0 = 0) and locally administered (bit 1 = 1)
-    first_byte = (first_byte & 0b11111100) | 0b00000010
-
-    mac = [first_byte] + [rand_byte() for _ in range(5)]
-    return ':'.join(f"{b:02x}" for b in mac)
-
-
 if __name__ == "__main__":
-    # If --ci is passed, run with test vendor + skip prompts
     if "--ci" in sys.argv:
-        interface = sys.argv[1]
-        unicast_mac_for_virtual_dummy_interface = generate_safe_mac() 
-        print(f"[CI] Spoofing {interface} to {unicast_mac_for_virtual_dummy_interface}")
-        spoof_new_mac_address(interface, unicast_mac_for_virtual_dummy_interface, confirm=False)
-    else:
-        main()
+        interface = sys.argv[ArgsIndex.INTERFACE.value]
+        unicast_mac_virtual_interface = generate_safe_mac() 
+        print(f"[CI] Spoofing {interface} to {unicast_mac_virtual_interface}")
+        spoof_new_mac_address(interface, unicast_mac_virtual_interface, user_confirm_iw_down=False)
+        return
+    
+    main()

@@ -34,3 +34,27 @@ def generate_hex_values_delimited_by_dotted(hex_values_to_generate: HexValuesLen
 @staticmethod
 def get_random_vendor_from_list(vendors: List[str]) -> str:
     return random.choice(vendors)
+
+
+def rand_byte():
+    return random.randint(0x00, 0xFF)
+
+@staticmethod
+def generate_safe_unicast_mac() -> str:
+    """
+    Generate a valid, randomly generated MAC address suitable for testing.
+
+    The returned MAC address is:
+    - Locally administered (bit 1 of the first byte is set to 1)
+    - Unicast (bit 0 of the first byte is set to 0)
+
+    These settings ensure compatibility with virtual and dummy network interfaces
+    where global or multicast MACs may be rejected by the kernel.
+
+    Returns:
+        str: A MAC address string in the format 'xx:xx:xx:xx:xx:xx'
+    """
+    first_byte = rand_byte()
+    first_byte = (first_byte & 0b11111100) | 0b00000010
+    mac = [first_byte] + [rand_byte() for _ in range(5)]
+    return ':'.join(f"{b:02x}" for b in mac)
