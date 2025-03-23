@@ -26,24 +26,26 @@ jobs:
           echo "Created dummy interface:"
           ip link show wlan0
 
-      - name: Run MacSpoofer
+      - name: Get initial MAC
+        id: get_mac
         run: |
-          echo "Running MacSpoofer on dummy wlan0..."
-          sudo python3 ./src/spoofer.py wlan0
-          echo "After spoofing:"
-          ip link show wlan0 | grep ether
+          OLD_MAC=$(ip link show wlan0 | awk '/ether/ {print $2}')
+          echo "old_mac=$OLD_MAC" >> $GITHUB_OUTPUT
+
+      - name: Run MacSpoofer in CI mode
+        run: |
+          echo "Spoofing MAC on dummy wlan0..."
+          sudo python3 ./src/spoofer.py wlan0 --ci
 
       - name: Verify MAC change
         run: |
-          OLD_MAC=$(ip link show wlan0 | awk '/ether/ {print $2}')
-          echo "Old MAC: $OLD_MAC"
-          sudo python3 ./src/spoofer.py wlan0
+          OLD_MAC="${{ steps.get_mac.outputs.old_mac }}"
           NEW_MAC=$(ip link show wlan0 | awk '/ether/ {print $2}')
+          echo "Old MAC: $OLD_MAC"
           echo "New MAC: $NEW_MAC"
-
           if [[ "$NEW_MAC" == "$OLD_MAC" ]]; then
-            echo "MAC was not changed!"
+            echo "MAC was not Spoofed!"
             exit 1
           else
-            echo "MAC spoof successful ✅"
+            echo "MAC Spoofed successfully!"
           fi
