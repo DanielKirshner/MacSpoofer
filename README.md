@@ -1,4 +1,5 @@
 # Mac Address Spoofer Tool
+![CI (master)](https://github.com/DanielKirshner/MacSpoofer/actions/workflows/linux-ci.yml/badge.svg?branch=master)
 
 ## What is a mac address?
 A media access control address is a unique identifier assigned to a network interface controller for use as a network address in communications within a network segment. This use is common in most IEEE 802 networking technologies, including Ethernet, Wi-Fi, and Bluetooth.
@@ -10,13 +11,13 @@ Mac Address is a 12-digit hexadecimal number (6-Byte binary number), which is mo
 
 
 ## Compatibility
-The tool is currently compatible with linux distributions only.
+The tool is compatible with linux distributions only.
 Tested on:
-- Ubuntu (16.04 - 22.04)
-- Fedora (34 - 37)
-- Debian (8 - 11)
-- Raspbian (8 - 11)
-
+- **Ubuntu**    [16.04.7, 18.04.6, 20.04.6, 22.04.5, 24.04.2]
+- **Fedora**    [34, 35, 36, 37, 38, 39, 40, 41]
+- **Debian**    [8, 9, 10, 11, 12]
+- **Raspbian**  [8, 9, 10, 11, 12]
+- **Kali**      [2021.4a, 2022.4, 2023.4, 2024.4, 2025.1] 
 
 ## Setup
 
@@ -37,12 +38,19 @@ ifconfig -a
 sudo python3 spoofer.py wlp03s
 ```
 
+## Docker build
+```
+docker build -t spoofer .
+docker run -it spoofer
+```
+
 ## Other tools
 * [Mac vendor lookup API](https://macvendors.com/)
 
 * [Wireshark known vendors "manuf" file](https://github.com/wireshark/wireshark/blob/master/manuf)
-    * Feel free to add more known manufactures to 'vendors.py'
+    * Feel free to add more known manufactures to `vendors.py`
 
 ## License
-### MIT-License
-### © 2024 Daniel Kirshner. All rights reserved.
+[MIT LICENSE](LICENSE)
+
+### © 2022-2025 Daniel Kirshner. All rights reserved.

@@ -16,9 +16,10 @@ def set_interface_state(interface: str, state: str) -> None:  # state = up/down
         sys.exit(1)
 
 
-def spoof_new_mac_address(interface: str, mac: str) -> None:
+def spoof_new_mac_address(interface: str, mac: str, user_confirm_iw_down: bool = True) -> None:
     print(f"[bold yellow]About to turn {interface} DOWN.")
-    input("Press Enter to continue or Ctrl+C to terminate -> ")
+    if user_confirm_iw_down:
+        input("Press Enter to continue or Ctrl+C to terminate -> ")
     print(f"\n[bold yellow]Turning {interface} OFF...")
     sleep(1)
     set_interface_state(interface, 'down')
@@ -45,16 +46,12 @@ def choose_vendor() -> str:
 
 
 def print_title() -> None:
-    print(
-        "[bold green]"
-        "\t\t\t__\n"
-        " ___ _ __   ___   ___  / _| ___ _ __ \n"
-        "/ __| '_ \ / _ \ / _ \| |_ / _ \ '__|\n"
-        "\__ \ |_) | (_) | (_) |  _|  __/ |\n"
-        "|___/ .__/ \___/ \___/|_|  \___|_|\n"
-        f"    |_|\n"
-    )
-
+    print(r"""[bold green]
+    ___ _ __   ____  ___  / _| ___ _ __ 
+    / __| '_ \ / _ \ / _ \| |_ / _ \ '__|
+    \__ \ |_) | (_) | (_) |  _|  __/ |
+    |___/ .__/ \___/ \___/|_|  \___|_|
+        |_|""")
 
 def run_tui(interface: str) -> None:
     print_title()
@@ -115,4 +112,10 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    if "--ci" in sys.argv:
+        interface = sys.argv[ArgsIndex.INTERFACE.value]
+        unicast_mac_virtual_interface = generate_safe_unicast_mac() 
+        print(f"[CI] Spoofing {interface} to {unicast_mac_virtual_interface}")
+        spoof_new_mac_address(interface, unicast_mac_virtual_interface, user_confirm_iw_down=False)
+    else:
+        main()

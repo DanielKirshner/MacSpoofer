@@ -1,0 +1,51 @@
+name: MacSpoofer CI
+
+on:
+  push:
+    branches: [dev, master]
+  pull_request:
+    branches: [dev, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y iproute2 net-tools python3-rich
+
+      - name: Create dummy interface (wlan0)
+        run: |
+          sudo ip link add wlan0 type dummy
+          sudo ip link set wlan0 up
+          echo "Created dummy interface:"
+          ip link show wlan0
+
+      - name: Get initial MAC
+        id: get_mac
+        run: |
+          OLD_MAC=$(ip link show wlan0 | awk '/ether/ {print $2}')
+          echo "old_mac=$OLD_MAC" >> $GITHUB_OUTPUT
+
+      - name: Run MacSpoofer in CI mode
+        run: |
+          echo "Spoofing MAC on dummy wlan0..."
+          sudo python3 ./src/spoofer.py wlan0 --ci
+
+      - name: Verify MAC change
+        run: |
+          OLD_MAC="${{ steps.get_mac.outputs.old_mac }}"
+          NEW_MAC=$(ip link show wlan0 | awk '/ether/ {print $2}')
+          echo "Old MAC: $OLD_MAC"
+          echo "New MAC: $NEW_MAC"
+          if [[ "$NEW_MAC" == "$OLD_MAC" ]]; then
+            echo "MAC was not Spoofed!"
+            exit 1
+          else
+            echo "MAC Spoofed successfully!"
+          fi

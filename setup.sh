@@ -4,7 +4,7 @@ CheckCommand()
 {
    $*
    if [ $? -ne 0 ]; then
-      echo "Error occured. Aborting."
+      echo "Error occurred. Aborting."
       exit 1
    fi
 }
@@ -30,7 +30,7 @@ InstallRequiredPackages()
 
 InstallRequiredPipPackages()
 {
-   CheckCommand pip install -r -q requirements.txt
+   CheckCommand pip install -q --break-system-packages -r requirements.txt
 }
 
 Main()
