@@ -37,6 +37,12 @@ ifconfig -a
 sudo python3 spoofer.py wlp03s
 ```
 
+## Docker build
+```
+docker build -t spoofer .
+docker run -it spoofer
+```
+
 ## Other tools
 * [Mac vendor lookup API](https://macvendors.com/)
 
