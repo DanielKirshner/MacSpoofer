@@ -1,0 +1,53 @@
+name: MacSpoofer Simulation CI
+
+on:
+  push:
+    branches: [dev, master]
+  pull_request:
+    branches: [dev, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y iproute2 iw net-tools kmod python3-rich
+
+      - name: Creating virtual WiFi device (using mac80211_hwsim)
+        run: |
+          sudo modprobe mac80211_hwsim radios=1
+          iw dev
+          ip link show wlan0 || true
+
+      - name: Bring interface up
+        run: |
+          sudo ip link set wlan0 up
+          echo "Initial MAC:"
+          ip link show wlan0 | grep ether
+
+      - name: Run MacSpoofer
+        run: |
+          echo "Spoofing MAC on wlan0..."
+          sudo python3 ./src/spoofer.py wlan0
+          echo "After spoofing:"
+          ip link show wlan0 | grep ether
+
+      - name: Verify MAC change
+        run: | # 02:00:00:00:00:00 is the default MAC for virtual wlan interfaces
+          NEW_MAC=$(ip link show wlan0 | awk '/ether/ {print $2}')
+          echo "Spoofed MAC: $NEW_MAC"
+          if [[ "$NEW_MAC" == "02:00:00:00:00:00" ]]; then
+            echo "MAC was not changed!"
+            exit 1
+          else
+            echo "MAC spoof successful"
+          fi
