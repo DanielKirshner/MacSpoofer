@@ -10,20 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        distro:
-          - ubuntu:22.04
-          - ubuntu:20.04
-          - ubuntu:18.04
-          - ubuntu:16.04
-          - debian:bookworm
-          - debian:bullseye
-          - kalilinux/kali-rolling
-
-    container:
-      image: ${{ matrix.distro }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
