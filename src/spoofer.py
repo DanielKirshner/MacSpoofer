@@ -1,37 +1,44 @@
 from random_utils import *
 from vendors import *
 import shell_utils
-
+from interface import InterfaceState
 from enum import Enum, auto
 from rich import print
 from time import sleep
-import subprocess
 import sys
 
 
-def set_interface_state(interface: str, state: str) -> None:  # state = up/down
-    return_code = subprocess.call(['ip', 'link', 'set', 'dev', interface, state])
-    if return_code != 0: # TODO: add shell utils to run command (params = command, expected_return_code)
+def set_interface_state(interface: str, state: InterfaceState) -> bool:
+    interface_set_successfully = shell_utils.execute_command(['ip', 'link', 'set', 'dev', interface, state])
+    if not interface_set_successfully:
         print(f"[bold red]Failed setting {interface} {state}.\nAbort.")
-        sys.exit(1)
+        return False
+    return True
 
 
 def spoof_new_mac_address(interface: str, mac: str, user_confirm_iw_down: bool = True) -> None:
+    """
+    TODO: make the command execute async and wrap this function as a class with aenter (down, spoof, up)...
+    """
     print(f"[bold yellow]About to turn {interface} DOWN.")
     if user_confirm_iw_down:
         input("Press Enter to continue or Ctrl+C to terminate -> ")
     print(f"\n[bold yellow]Turning {interface} OFF...")
     sleep(1)
-    set_interface_state(interface, 'down')
+    
+    interface_set_successfully = set_interface_state(interface, InterfaceState.DOWN)
+    if not interface_set_successfully:
+        return
+    
     print(f"[bold yellow]Spoofing {interface} mac...")
     sleep(1)
-    return_code = subprocess.call(['ip', 'link', 'set', 'dev', interface, 'address', mac])
-    if return_code != 0:
+    mac_spoofed_successfully = shell_utils.execute_command(['ip', 'link', 'set', 'dev', interface, 'address', mac])
+    if not mac_spoofed_successfully:
             print(f"[bold red]Failed spoofing {interface} mac address to {mac}.")
     sleep(1)
     print(f"[bold yellow]Turning {interface} back ON...")
     sleep(1)
-    set_interface_state(interface, 'up')
+    set_interface_state(interface, InterfaceState.UP)
 
 
 def choose_vendor() -> str:
