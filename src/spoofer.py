@@ -1,3 +1,4 @@
+from pretty_errors_handler import PrettyErrorsHandle
 from random_utils import *
 from vendors import *
 import shell_utils
@@ -109,6 +110,7 @@ def run_spoofer_logic() -> None:
 
 def main() -> None:
     try:
+        PrettyErrorsHandle()
         run_spoofer_logic()
     except KeyboardInterrupt:
         print("[bold red]\nStopped.")
