@@ -16,8 +16,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y iproute2 net-tools python3-rich
+          chmod +x setup.sh
+          ./setup.sh
+          # sudo apt-get update -qq
+          # sudo apt-get install -y iproute2 net-tools python3-rich
 
       - name: Create dummy interface (wlan0)
         run: |
