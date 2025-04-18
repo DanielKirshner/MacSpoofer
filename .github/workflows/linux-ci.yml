@@ -14,10 +14,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install dependencies
+      - name: Running setup script
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y iproute2 net-tools python3-rich
+          sudo chmod +x setup.sh
+          sudo ./setup.sh
 
       - name: Create dummy interface (wlan0)
         run: |
