@@ -7,6 +7,7 @@ from enum import Enum, auto
 from rich import print
 from time import sleep
 import sys
+import art
 
 
 def set_interface_state(interface: str, state: InterfaceState) -> bool:
@@ -53,16 +54,8 @@ def choose_vendor() -> str:
     return VENDORS[int(user_choice)]
 
 
-def print_title() -> None:
-    print(r"""[bold green]
-    ___ _ __   ____  ___  / _| ___ _ __ 
-    / __| '_ \ / _ \ / _ \| |_ / _ \ '__|
-    \__ \ |_) | (_) | (_) |  _|  __/ |
-    |___/ .__/ \___/ \___/|_|  \___|_|
-        |_|""")
-
 def run_tui(interface: str) -> None:
-    print_title()
+    art.tprint("Spoofer")
     vendor = choose_vendor()
     print("Generating random mac according to your request...\n")
     sleep(1)
