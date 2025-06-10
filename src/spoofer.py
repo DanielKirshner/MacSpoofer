@@ -119,5 +119,10 @@ if __name__ == "__main__":
         unicast_mac_virtual_interface = generate_safe_unicast_mac() 
         print(f"[CI] Spoofing {interface} to {unicast_mac_virtual_interface}")
         spoof_new_mac_address(interface, unicast_mac_virtual_interface, user_confirm_iw_down=False)
+    elif "--auto" in sys.argv:
+        print("[AUTO] Generating safe random unicast MAC address...")
+        auto_mac = generate_safe_unicast_mac()
+        print(f"[AUTO] Spoofing {interface} to {auto_mac}")
+        spoof_new_mac_address(interface, auto_mac, user_confirm_iw_down=False)
     else:
         main()
