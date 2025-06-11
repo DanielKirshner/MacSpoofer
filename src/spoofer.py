@@ -114,8 +114,16 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    if shell_utils.check_for_admin() == False:
+        print("[bold red]Needs root.")
+        sys.exit(1)
+        
+    if len(sys.argv) < ArgsIndex.EXPECTED_LENGTH.value:
+        print("[bold red]Missing arguments.\nAbort.")
+        sys.exit(1)
+
+    interface = sys.argv[ArgsIndex.INTERFACE.value]
     if "--ci" in sys.argv:
-        interface = sys.argv[ArgsIndex.INTERFACE.value]
         unicast_mac_virtual_interface = generate_safe_unicast_mac() 
         print(f"[CI] Spoofing {interface} to {unicast_mac_virtual_interface}")
         spoof_new_mac_address(interface, unicast_mac_virtual_interface, user_confirm_iw_down=False)
