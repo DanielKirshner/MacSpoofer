@@ -34,9 +34,12 @@ ifconfig -a
 
 - Run the tool as administrator with your interface name as an argument:
 ```
-sudo python3 spoofer.py wlp03s
+sudo python3 spoofer.py <interface>
 ```
-
+- Run it in auto mode (non-interactive)
+```
+sudo python3 spoofer.py <interface> --auto
+```
 ## Docker build
 ```
 docker build -t spoofer .
