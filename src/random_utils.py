@@ -42,7 +42,7 @@ def rand_byte():
 @staticmethod
 def generate_safe_unicast_mac() -> str:
     """
-    Generate a valid, randomly generated MAC address suitable for testing.
+    Generate a valid, randomly generated MAC address.
 
     The returned MAC address is:
     - Locally administered (bit 1 of the first byte is set to 1)

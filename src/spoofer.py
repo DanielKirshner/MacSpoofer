@@ -22,23 +22,23 @@ def spoof_new_mac_address(interface: str, mac: str, user_confirm_iw_down: bool =
     """
     TODO: make the command execute async and wrap this function as a class with aenter (down, spoof, up)...
     """
-    print(f"[bold yellow]About to turn {interface} DOWN.")
+    print(f"[+] [bold yellow]We need to temporarily turn OFF interface: {interface}")
     if user_confirm_iw_down:
         input("Press Enter to continue or Ctrl+C to terminate -> ")
-    print(f"\n[bold yellow]Turning {interface} OFF...")
+    print(f"\n[+] [bold green]Turning {interface} OFF...")
     sleep(1)
     
     interface_set_successfully = set_interface_state(interface, InterfaceState.DOWN)
     if not interface_set_successfully:
         return
     
-    print(f"[bold yellow]Spoofing {interface} mac...")
+    print(f"\n[+] [bold green]Spoofing {interface} mac...")
     sleep(1)
     mac_spoofed_successfully = shell_utils.execute_command(['ip', 'link', 'set', 'dev', interface, 'address', mac])
     if not mac_spoofed_successfully:
-            print(f"[bold red]Failed spoofing {interface} mac address to {mac}.")
+            print(f"\n[-] [bold red]Failed spoofing {interface} mac address to {mac}.")
     sleep(1)
-    print(f"[bold yellow]Turning {interface} back ON...")
+    print(f"\n[+] [bold green]Turning {interface} back ON...")
     sleep(1)
     set_interface_state(interface, InterfaceState.UP)
 
@@ -57,11 +57,11 @@ def choose_vendor() -> str:
 def run_tui(interface: str) -> None:
     art.tprint("Spoofer")
     vendor = choose_vendor()
-    print("Generating random mac according to your request...\n")
+    print("[+] [bold green]Generating random mac according to your request...\n")
     sleep(1)
     mac = ""
     if vendor == VENDORS[0]:
-        mac = generate_hex_values_delimited_by_dotted(HexValuesLength.MAC_ADDRESS)
+        mac = generate_safe_unicast_mac()
     else:
         if vendor == VENDORS[1]:
             mac += get_random_vendor_from_list(SAMSUNG_VENDORS)
@@ -79,10 +79,10 @@ def run_tui(interface: str) -> None:
             mac += get_random_vendor_from_list(CISCO_VENDORS)
         mac += ':' + generate_hex_values_delimited_by_dotted(HexValuesLength.NIC)
 
-    print(f"Spoofing your interface {interface} mac to {mac}\n")
+    print(f"[+] [bold green]Spoofing your interface {interface} mac to {mac}\n")
     sleep(1)
     spoof_new_mac_address(interface, mac)
-    print(f"Done.")
+    print(f"\n[+] [bold green]Done.")
 
 
 class ArgsIndex(Enum):
@@ -91,11 +91,11 @@ class ArgsIndex(Enum):
 
 def run_spoofer_logic() -> None:
     if shell_utils.check_for_admin() == False:
-        print("[bold red]Needs root.")
+        print("[-] [bold red]Needs root.")
         return
         
     if len(sys.argv) < ArgsIndex.EXPECTED_LENGTH.value:
-        print("[bold red]Missing arguments.\nAbort.")
+        print("[-] [bold red]Missing arguments.\nAbort.")
         return
 
     run_tui(sys.argv[ArgsIndex.INTERFACE.value])
@@ -106,20 +106,20 @@ def main() -> None:
         PrettyErrorsHandle()
         run_spoofer_logic()
     except KeyboardInterrupt:
-        print("[bold red]\nStopped.")
+        print("\n[-] [bold red]Stopped.")
     except ModuleNotFoundError:
-        print("[bold red]\nMissing one of the pip packages.")
+        print("\n[-] [bold red]Missing one of the pip packages.")
     except Exception:
-        print("[bold red]\nError occurred.")
+        print("\n[-] [bold red]Error occurred.")
 
 
 if __name__ == "__main__":
     if shell_utils.check_for_admin() == False:
-        print("[bold red]Needs root.")
+        print("[-] [bold red]Needs root.")
         sys.exit(1)
         
     if len(sys.argv) < ArgsIndex.EXPECTED_LENGTH.value:
-        print("[bold red]Missing arguments.\nAbort.")
+        print("[-] [bold red]Missing arguments.")
         sys.exit(1)
 
     interface = sys.argv[ArgsIndex.INTERFACE.value]
