@@ -22,7 +22,7 @@ def spoof_new_mac_address(interface: str, mac: str, user_confirm_iw_down: bool =
     """
     TODO: make the command execute async and wrap this function as a class with aenter (down, spoof, up)...
     """
-    print(f"[bold yellow]About to turn {interface} DOWN.")
+    print(f"[bold yellow]We need to temporarily turn OFF interface: {interface}")
     if user_confirm_iw_down:
         input("Press Enter to continue or Ctrl+C to terminate -> ")
     print(f"\n[bold yellow]Turning {interface} OFF...")
