@@ -32,25 +32,34 @@ sudo ./setup.sh
 ifconfig -a
 ```
 
-- Run the tool as administrator with your interface name as an argument:
+- View help and usage instructions:
 ```
-sudo python3 spoofer.py <interface>
+python3 main.py --help
 ```
-- Run it in auto mode (non-interactive)
+
+- Run the tool as administrator with your interface name:
 ```
-sudo python3 spoofer.py <interface> --auto
+sudo python3 main.py -i <interface>
 ```
-## Docker build
+
+- Run it in auto mode (non-interactive):
 ```
-docker build -t spoofer .
-docker run -it spoofer
+sudo python3 main.py -i <interface> --auto
 ```
+
+### Command Line Options
+
+- `-i` - Network interface name (e.g., wlan0, eth0) [Required]
+- `--auto` - Non-interactive mode: generate and apply a safe random unicast MAC address
+- `--ci` - CI mode: for automated testing (similar to --auto but with different output)
+- `--help` - Show help message and usage examples
+- `--version` - Show version information
 
 ## Other tools
 * [Mac vendor lookup API](https://macvendors.com/)
 
 * [Wireshark known vendors "manuf" file](https://github.com/wireshark/wireshark/blob/master/manuf)
-    * Feel free to add more known manufactures to `vendors.py`
+    * Feel free to add more known manufactures to [`src/utils/vendors.py`](src/utils/vendors.py)
 
 ## License
 [MIT LICENSE](LICENSE)

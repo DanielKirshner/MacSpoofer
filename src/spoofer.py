@@ -1,8 +1,8 @@
-from pretty_errors_handler import PrettyErrorsHandle
-from random_utils import *
-from vendors import *
-import shell_utils
-from interface import InterfaceState
+from src.modules.pretty_errors_handler import PrettyErrorsHandler
+from src.utils.random_utils import *
+from src.utils.vendors import *
+import src.utils.shell_utils as shell_utils
+from src.modules.interface import InterfaceState
 from enum import Enum, auto
 from rich import print
 from time import sleep
@@ -85,52 +85,21 @@ def run_tui(interface: str) -> None:
     print(f"\n[+] [bold green]Done.")
 
 
-class ArgsIndex(Enum):
-    INTERFACE = auto()
-    EXPECTED_LENGTH = auto()
-
-def run_spoofer_logic() -> None:
-    if shell_utils.check_for_admin() == False:
+def run_spoofer_logic(args) -> None:
+    if not shell_utils.check_for_admin():
         print("[-] [bold red]Needs root.")
         return
-        
-    if len(sys.argv) < ArgsIndex.EXPECTED_LENGTH.value:
-        print("[-] [bold red]Missing arguments.\nAbort.")
-        return
 
-    run_tui(sys.argv[ArgsIndex.INTERFACE.value])
-
-
-def main() -> None:
-    try:
-        PrettyErrorsHandle()
-        run_spoofer_logic()
-    except KeyboardInterrupt:
-        print("\n[-] [bold red]Stopped.")
-    except ModuleNotFoundError:
-        print("\n[-] [bold red]Missing one of the pip packages.")
-    except Exception:
-        print("\n[-] [bold red]Error occurred.")
-
-
-if __name__ == "__main__":
-    if shell_utils.check_for_admin() == False:
-        print("[-] [bold red]Needs root.")
-        sys.exit(1)
-        
-    if len(sys.argv) < ArgsIndex.EXPECTED_LENGTH.value:
-        print("[-] [bold red]Missing arguments.")
-        sys.exit(1)
-
-    interface = sys.argv[ArgsIndex.INTERFACE.value]
-    if "--ci" in sys.argv:
+    interface = args.i
+    
+    if args.ci:
         unicast_mac_virtual_interface = generate_safe_unicast_mac() 
-        print(f"[CI] Spoofing {interface} to {unicast_mac_virtual_interface}")
+        print(f"\n[CI] Spoofing {interface} to {unicast_mac_virtual_interface}")
         spoof_new_mac_address(interface, unicast_mac_virtual_interface, user_confirm_iw_down=False)
-    elif "--auto" in sys.argv:
-        print("[AUTO] Generating safe random unicast MAC address...")
+    elif args.auto:
+        print("\n[AUTO] Generating safe random unicast MAC address...")
         auto_mac = generate_safe_unicast_mac()
-        print(f"[AUTO] Spoofing {interface} to {auto_mac}")
+        print(f"\n[AUTO] Spoofing {interface} to {auto_mac}")
         spoof_new_mac_address(interface, auto_mac, user_confirm_iw_down=False)
     else:
-        main()
+        run_tui(interface)

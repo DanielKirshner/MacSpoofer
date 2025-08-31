@@ -35,7 +35,7 @@ jobs:
       - name: Run MacSpoofer in CI mode
         run: |
           echo "Spoofing MAC on dummy wlan0..."
-          sudo python3 ./src/spoofer.py wlan0 --ci
+          sudo python3 ./main.py -i wlan0 --ci
 
       - name: Verify MAC change
         run: |
