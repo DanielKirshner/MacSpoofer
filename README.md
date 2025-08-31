@@ -34,17 +34,17 @@ ifconfig -a
 
 - View help and usage instructions:
 ```
-python3 src/spoofer.py --help
+python3 main.py --help
 ```
 
 - Run the tool as administrator with your interface name:
 ```
-sudo python3 src/spoofer.py -i <interface>
+sudo python3 main.py -i <interface>
 ```
 
 - Run it in auto mode (non-interactive):
 ```
-sudo python3 src/spoofer.py -i <interface> --auto
+sudo python3 main.py -i <interface> --auto
 ```
 
 ### Command Line Options
@@ -59,7 +59,7 @@ sudo python3 src/spoofer.py -i <interface> --auto
 * [Mac vendor lookup API](https://macvendors.com/)
 
 * [Wireshark known vendors "manuf" file](https://github.com/wireshark/wireshark/blob/master/manuf)
-    * Feel free to add more known manufactures to `vendors.py`
+    * Feel free to add more known manufactures to [`src/utils/vendors.py`](src/utils/vendors.py)
 
 ## License
 [MIT LICENSE](LICENSE)
