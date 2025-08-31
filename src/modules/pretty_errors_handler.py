@@ -1,6 +1,6 @@
 import pretty_errors
 
-class PrettyErrorsHandle:
+class PrettyErrorsHandler:
     
     def __init__(self):
         pretty_errors.configure(

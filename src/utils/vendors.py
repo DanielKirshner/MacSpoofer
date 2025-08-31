@@ -8,7 +8,8 @@ VENDORS: List[str] = [
     'Microsoft', 
     'Huawei', 
     'Google', 
-    'Cisco']
+    'Cisco'
+]
 
 SAMSUNG_VENDORS: List[str] = [
     '00:21:19', '00:02:78', '00:07:ab', '00:09:18', '00:0d:ae', '00:0d:e5', '00:12:47', '00:12:fb',
