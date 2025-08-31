@@ -8,6 +8,7 @@ from rich import print
 from time import sleep
 import sys
 import art
+import argparse
 
 
 def set_interface_state(interface: str, state: InterfaceState) -> bool:
@@ -85,26 +86,74 @@ def run_tui(interface: str) -> None:
     print(f"\n[+] [bold green]Done.")
 
 
-class ArgsIndex(Enum):
-    INTERFACE = auto()
-    EXPECTED_LENGTH = auto()
+def create_argument_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="MAC Address Spoofer Tool - Change your network interface MAC address",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s -i wlan0                 # Interactive mode with vendor selection
+  %(prog)s -i wlan0 --auto          # Non-interactive mode with random MAC
+  %(prog)s -i eth0 --ci             # CI mode (for automated testing)
 
-def run_spoofer_logic() -> None:
-    if shell_utils.check_for_admin() == False:
+Supported interfaces: wlan0, eth0, enp0s3, etc.
+Note: This tool requires root privileges to modify network interfaces.
+        """
+    )
+    
+    parser.add_argument(
+        '-i',
+        required=True,
+        help='Network interface name (e.g., wlan0, eth0)'
+    )
+    
+    parser.add_argument(
+        '--auto',
+        action='store_true',
+        help='Non-interactive mode: generate and apply a safe random unicast MAC address'
+    )
+    
+    parser.add_argument(
+        '--ci',
+        action='store_true',
+        help='CI mode: for automated testing (similar to --auto but with different output)'
+    )
+    
+    parser.add_argument(
+        '--version',
+        action='version',
+        version='MAC Address Spoofer v1.0.0'
+    )
+    
+    return parser
+
+
+def run_spoofer_logic(args: argparse.Namespace) -> None:
+    if not shell_utils.check_for_admin():
         print("[-] [bold red]Needs root.")
         return
-        
-    if len(sys.argv) < ArgsIndex.EXPECTED_LENGTH.value:
-        print("[-] [bold red]Missing arguments.\nAbort.")
-        return
 
-    run_tui(sys.argv[ArgsIndex.INTERFACE.value])
+    interface = args.i
+    
+    if args.ci:
+        unicast_mac_virtual_interface = generate_safe_unicast_mac() 
+        print(f"\n[CI] Spoofing {interface} to {unicast_mac_virtual_interface}")
+        spoof_new_mac_address(interface, unicast_mac_virtual_interface, user_confirm_iw_down=False)
+    elif args.auto:
+        print("\n[AUTO] Generating safe random unicast MAC address...")
+        auto_mac = generate_safe_unicast_mac()
+        print(f"\n[AUTO] Spoofing {interface} to {auto_mac}")
+        spoof_new_mac_address(interface, auto_mac, user_confirm_iw_down=False)
+    else:
+        run_tui(interface)
 
 
 def main() -> None:
     try:
         PrettyErrorsHandle()
-        run_spoofer_logic()
+        parser = create_argument_parser()
+        args = parser.parse_args()
+        run_spoofer_logic(args)
     except KeyboardInterrupt:
         print("\n[-] [bold red]Stopped.")
     except ModuleNotFoundError:
@@ -114,23 +163,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    if shell_utils.check_for_admin() == False:
-        print("[-] [bold red]Needs root.")
-        sys.exit(1)
-        
-    if len(sys.argv) < ArgsIndex.EXPECTED_LENGTH.value:
-        print("[-] [bold red]Missing arguments.")
-        sys.exit(1)
-
-    interface = sys.argv[ArgsIndex.INTERFACE.value]
-    if "--ci" in sys.argv:
-        unicast_mac_virtual_interface = generate_safe_unicast_mac() 
-        print(f"[CI] Spoofing {interface} to {unicast_mac_virtual_interface}")
-        spoof_new_mac_address(interface, unicast_mac_virtual_interface, user_confirm_iw_down=False)
-    elif "--auto" in sys.argv:
-        print("[AUTO] Generating safe random unicast MAC address...")
-        auto_mac = generate_safe_unicast_mac()
-        print(f"[AUTO] Spoofing {interface} to {auto_mac}")
-        spoof_new_mac_address(interface, auto_mac, user_confirm_iw_down=False)
-    else:
-        main()
+    main()
