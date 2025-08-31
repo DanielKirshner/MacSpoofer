@@ -55,12 +55,6 @@ sudo python3 src/spoofer.py -i <interface> --auto
 - `--help` - Show help message and usage examples
 - `--version` - Show version information
 
-## Docker build
-```
-docker build -t spoofer .
-docker run -it spoofer
-```
-
 ## Other tools
 * [Mac vendor lookup API](https://macvendors.com/)
 
