@@ -3,35 +3,37 @@
 import getpass
 import subprocess
 
-from rich import print
+from src.utils.exceptions import CustomException, ErrorCode
 
 
 def check_for_admin() -> bool:
     """Check if the current user has root/admin privileges.
-    
+
     Returns:
         True if running as root, False otherwise
     """
     return getpass.getuser() == "root"
 
 
-def execute_command(command_args: list[str]) -> bool:
-    """Execute a shell command and return success status.
-    
+def execute_command(command_args: list[str]) -> None:
+    """Execute a shell command.
+
     Args:
         command_args: List of command arguments to execute
-        
-    Returns:
-        True if command executed successfully (exit code 0), False otherwise
+
+    Raises:
+        CustomException: If command_args is empty or the command exits non-zero
     """
     if not command_args:
-        print("[bold red]No command args given.")
-        return False
-    
+        raise CustomException(
+            message="execute_command called with no arguments",
+            error_code=ErrorCode.COMMAND_EXECUTION_FAILED,
+        )
+
     result = subprocess.call(command_args)
-    
+
     if result != 0:
-        print(f"[bold red]Command failed with args {command_args}.")
-        return False
-    
-    return True
+        raise CustomException(
+            message=f"Command failed (exit {result}): {' '.join(command_args)}",
+            error_code=ErrorCode.COMMAND_EXECUTION_FAILED,
+        )
