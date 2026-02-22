@@ -5,7 +5,7 @@ import pretty_errors
 
 def configure_pretty_errors() -> None:
     """Configure pretty_errors for enhanced error display.
-    
+
     Sets up formatting options for better error readability including
     separator characters, full filename display, and context lines.
     """

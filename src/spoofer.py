@@ -2,12 +2,13 @@
 
 from time import sleep
 
-from rich import print
 import art
+from rich import print
 
 from src.modules.args_parser import SpooferArgs
 from src.modules.interface import NetworkInterface
 from src.utils import shell_utils
+from src.utils.exceptions import CustomException, ErrorCode
 from src.utils.random_utils import (
     HexValuesLength,
     generate_hex_values_delimited_by_dotted,
@@ -21,87 +22,73 @@ def spoof_mac_address(
     interface: NetworkInterface,
     mac: str,
     require_confirmation: bool = True,
-) -> bool:
+) -> None:
     """Spoof the MAC address of a network interface.
-    
+
     This function temporarily brings the interface down, changes its MAC address,
     and brings it back up.
-    
+
     Args:
         interface: NetworkInterface instance to spoof
         mac: New MAC address to assign (format: 'xx:xx:xx:xx:xx:xx')
         require_confirmation: If True, wait for user confirmation before proceeding
-        
-    Returns:
-        True if spoofing was successful, False otherwise
+
+    Raises:
+        CustomException: If any step of the spoofing process fails
     """
     print(f"[+] [bold yellow]We need to temporarily turn OFF interface: {interface}")
-    
+
     if require_confirmation:
         input("Press Enter to continue or Ctrl+C to terminate -> ")
-    
+
     print(f"\n[+] [bold green]Turning {interface} OFF...")
     sleep(1)
-    
-    if not interface.down():
-        return False
-    
+    interface.down()
+
     print(f"\n[+] [bold green]Spoofing {interface} mac...")
     sleep(1)
-    
-    success = interface.set_mac_address(mac)
-    
-    if not success:
-        print(f"\n[-] [bold red]Failed spoofing {interface} mac address to {mac}.")
-    
+    interface.set_mac_address(mac)
+
     sleep(1)
     print(f"\n[+] [bold green]Turning {interface} back ON...")
     sleep(1)
-    
     interface.up()
-    return success
 
 
 def choose_vendor() -> str:
     """Display vendor options and get user selection.
-    
+
     Returns:
         The selected vendor name
     """
     vendors = VendorRegistry.NAMES
-    options = "\n".join(
-        f"[bold green][{i}] [cyan]{vendor}"
-        for i, vendor in enumerate(vendors)
-    )
+    options = "\n".join(f"[bold green][{i}] [cyan]{vendor}" for i, vendor in enumerate(vendors))
     print(f"[bold magenta]Enter your choice:\n\n{options}\n")
-    
+
     user_input = input("-> ").strip()
-    
+
     while not user_input.isdigit() or int(user_input) >= len(vendors):
         user_input = input("Invalid choice, try again-> ").strip()
-    
+
     return vendors[int(user_input)]
 
 
 def generate_mac_for_vendor(vendor: str) -> str:
     """Generate a MAC address for the specified vendor.
-    
+
     Args:
         vendor: Vendor name (must be in VendorRegistry.NAMES)
-        
+
     Returns:
         A valid MAC address string
     """
-    # Handle "Total Random" case
     if vendor == VendorRegistry.NAMES[0]:
         return generate_safe_unicast_mac()
-    
-    # Get vendor-specific OUI and append random NIC portion
+
     vendor_oui_list = VendorRegistry.get_ouis_for_vendor(vendor)
     if vendor_oui_list is None:
-        # Fallback to random if vendor not found
         return generate_safe_unicast_mac()
-    
+
     oui = get_random_vendor_from_list(vendor_oui_list)
     nic = generate_hex_values_delimited_by_dotted(HexValuesLength.NIC)
     return f"{oui}:{nic}"
@@ -109,37 +96,42 @@ def generate_mac_for_vendor(vendor: str) -> str:
 
 def run_tui(interface: NetworkInterface) -> None:
     """Run the text-based user interface for MAC spoofing.
-    
+
     Args:
         interface: NetworkInterface instance to spoof
     """
     art.tprint("Spoofer")
-    
+
     vendor = choose_vendor()
     print("[+] [bold green]Generating random mac according to your request...\n")
     sleep(1)
-    
+
     mac = generate_mac_for_vendor(vendor)
-    
+
     print(f"[+] [bold green]Spoofing your interface {interface} mac to {mac}\n")
     sleep(1)
-    
+
     spoof_mac_address(interface, mac)
     print("\n[+] [bold green]Done.")
 
 
 def run_spoofer_logic(args: SpooferArgs) -> None:
     """Main entry point for the spoofer logic.
-    
+
     Args:
         args: Parsed command-line arguments
+
+    Raises:
+        CustomException: If not running as root
     """
     if not shell_utils.check_for_admin():
-        print("[-] [bold red]Needs root.")
-        return
+        raise CustomException(
+            message="This tool must be run as root (sudo)",
+            error_code=ErrorCode.COMMAND_EXECUTION_FAILED,
+        )
 
     interface = NetworkInterface(args.interface)
-    
+
     if args.ci or args.auto:
         mode = "CI" if args.ci else "AUTO"
         print(f"\n[{mode}] Generating safe random unicast MAC address...")

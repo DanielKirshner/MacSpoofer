@@ -3,9 +3,10 @@
 
 from rich import print
 
-from src.modules.error_config import configure_pretty_errors
 from src.modules.args_parser import ArgumentParser
+from src.modules.error_config import configure_pretty_errors
 from src.spoofer import run_spoofer_logic
+from src.utils.exceptions import CustomException
 
 
 def main() -> None:
@@ -16,6 +17,8 @@ def main() -> None:
         run_spoofer_logic(args)
     except KeyboardInterrupt:
         print("\n[-] [bold red]Stopped.")
+    except CustomException as e:
+        print(f"\n[-] [bold red]{e}")
     except ModuleNotFoundError:
         print("\n[-] [bold red]Missing one of the pip packages.")
     except Exception as e:
