@@ -1,22 +1,37 @@
+"""Shell command utilities for system-level operations."""
+
 import getpass
 import subprocess
 
-@staticmethod
+from rich import print
+
+
 def check_for_admin() -> bool:
-    return getpass.getuser() == 'root'
-
-
-@staticmethod
-def execute_command(command_args: list[any]) -> bool:
-    if not command_args:
-         print("No command args given.")
-         return False
+    """Check if the current user has root/admin privileges.
     
-    SUCCESS_RETURN_CODE = 0
-    return_code = subprocess.call(command_args)
+    Returns:
+        True if running as root, False otherwise
+    """
+    return getpass.getuser() == "root"
 
-    if return_code != SUCCESS_RETURN_CODE:
-            print(f"[bold red]Command failed with args {command_args}.")
-            return False
+
+def execute_command(command_args: list[str]) -> bool:
+    """Execute a shell command and return success status.
+    
+    Args:
+        command_args: List of command arguments to execute
+        
+    Returns:
+        True if command executed successfully (exit code 0), False otherwise
+    """
+    if not command_args:
+        print("[bold red]No command args given.")
+        return False
+    
+    result = subprocess.call(command_args)
+    
+    if result != 0:
+        print(f"[bold red]Command failed with args {command_args}.")
+        return False
     
     return True
