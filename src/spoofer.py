@@ -1,105 +1,150 @@
-from src.modules.pretty_errors_handler import PrettyErrorsHandler
-from src.utils.random_utils import *
-from src.utils.vendors import *
-import src.utils.shell_utils as shell_utils
-from src.modules.interface import InterfaceState
-from enum import Enum, auto
-from rich import print
+"""MAC Address Spoofer - Core spoofing logic and TUI."""
+
 from time import sleep
-import sys
+
+from rich import print
 import art
 
+from src.modules.args_parser import SpooferArgs
+from src.modules.interface import NetworkInterface
+from src.utils import shell_utils
+from src.utils.random_utils import (
+    HexValuesLength,
+    generate_hex_values_delimited_by_dotted,
+    generate_safe_unicast_mac,
+    get_random_vendor_from_list,
+)
+from src.utils.vendors import VendorRegistry
 
-def set_interface_state(interface: str, state: InterfaceState) -> bool:
-    interface_set_successfully = shell_utils.execute_command(['ip', 'link', 'set', 'dev', interface, state])
-    if not interface_set_successfully:
-        print(f"[bold red]Failed setting {interface} {state}.\nAbort.")
-        return False
-    return True
 
-
-def spoof_new_mac_address(interface: str, mac: str, user_confirm_iw_down: bool = True) -> None:
-    """
-    TODO: make the command execute async and wrap this function as a class with aenter (down, spoof, up)...
+def spoof_mac_address(
+    interface: NetworkInterface,
+    mac: str,
+    require_confirmation: bool = True,
+) -> bool:
+    """Spoof the MAC address of a network interface.
+    
+    This function temporarily brings the interface down, changes its MAC address,
+    and brings it back up.
+    
+    Args:
+        interface: NetworkInterface instance to spoof
+        mac: New MAC address to assign (format: 'xx:xx:xx:xx:xx:xx')
+        require_confirmation: If True, wait for user confirmation before proceeding
+        
+    Returns:
+        True if spoofing was successful, False otherwise
     """
     print(f"[+] [bold yellow]We need to temporarily turn OFF interface: {interface}")
-    if user_confirm_iw_down:
+    
+    if require_confirmation:
         input("Press Enter to continue or Ctrl+C to terminate -> ")
+    
     print(f"\n[+] [bold green]Turning {interface} OFF...")
     sleep(1)
     
-    interface_set_successfully = set_interface_state(interface, InterfaceState.DOWN)
-    if not interface_set_successfully:
-        return
+    if not interface.down():
+        return False
     
     print(f"\n[+] [bold green]Spoofing {interface} mac...")
     sleep(1)
-    mac_spoofed_successfully = shell_utils.execute_command(['ip', 'link', 'set', 'dev', interface, 'address', mac])
-    if not mac_spoofed_successfully:
-            print(f"\n[-] [bold red]Failed spoofing {interface} mac address to {mac}.")
+    
+    success = interface.set_mac_address(mac)
+    
+    if not success:
+        print(f"\n[-] [bold red]Failed spoofing {interface} mac address to {mac}.")
+    
     sleep(1)
     print(f"\n[+] [bold green]Turning {interface} back ON...")
     sleep(1)
-    set_interface_state(interface, InterfaceState.UP)
+    
+    interface.up()
+    return success
 
 
 def choose_vendor() -> str:
-    print_options = ''
-    for i in range(len(VENDORS)):
-        print_options += f"[bold green][{i}] [cyan]{VENDORS[i]}\n"
-    print(f"[bold magenta]Enter your choice:\n\n{print_options}")
-    user_choice = str(input('-> ').strip())
-    while user_choice.isnumeric() == False or int(user_choice) >= len(VENDORS):
-        user_choice = str(input('Invalid choice, try again-> ').strip())
-    return VENDORS[int(user_choice)]
+    """Display vendor options and get user selection.
+    
+    Returns:
+        The selected vendor name
+    """
+    vendors = VendorRegistry.NAMES
+    options = "\n".join(
+        f"[bold green][{i}] [cyan]{vendor}"
+        for i, vendor in enumerate(vendors)
+    )
+    print(f"[bold magenta]Enter your choice:\n\n{options}\n")
+    
+    user_input = input("-> ").strip()
+    
+    while not user_input.isdigit() or int(user_input) >= len(vendors):
+        user_input = input("Invalid choice, try again-> ").strip()
+    
+    return vendors[int(user_input)]
 
 
-def run_tui(interface: str) -> None:
+def generate_mac_for_vendor(vendor: str) -> str:
+    """Generate a MAC address for the specified vendor.
+    
+    Args:
+        vendor: Vendor name (must be in VendorRegistry.NAMES)
+        
+    Returns:
+        A valid MAC address string
+    """
+    # Handle "Total Random" case
+    if vendor == VendorRegistry.NAMES[0]:
+        return generate_safe_unicast_mac()
+    
+    # Get vendor-specific OUI and append random NIC portion
+    vendor_oui_list = VendorRegistry.get_ouis_for_vendor(vendor)
+    if vendor_oui_list is None:
+        # Fallback to random if vendor not found
+        return generate_safe_unicast_mac()
+    
+    oui = get_random_vendor_from_list(vendor_oui_list)
+    nic = generate_hex_values_delimited_by_dotted(HexValuesLength.NIC)
+    return f"{oui}:{nic}"
+
+
+def run_tui(interface: NetworkInterface) -> None:
+    """Run the text-based user interface for MAC spoofing.
+    
+    Args:
+        interface: NetworkInterface instance to spoof
+    """
     art.tprint("Spoofer")
+    
     vendor = choose_vendor()
     print("[+] [bold green]Generating random mac according to your request...\n")
     sleep(1)
-    mac = ""
-    if vendor == VENDORS[0]:
-        mac = generate_safe_unicast_mac()
-    else:
-        if vendor == VENDORS[1]:
-            mac += get_random_vendor_from_list(SAMSUNG_VENDORS)
-        elif vendor == VENDORS[2]:
-            mac += get_random_vendor_from_list(APPLE_VENDORS)
-        elif vendor == VENDORS[3]:
-            mac += get_random_vendor_from_list(INTEL_VENDORS)
-        elif vendor == VENDORS[4]:
-            mac += get_random_vendor_from_list(MICROSOFT_VENDORS)
-        elif vendor == VENDORS[5]:
-            mac += get_random_vendor_from_list(HUAWEI_VENDORS)
-        elif vendor == VENDORS[6]:
-            mac += get_random_vendor_from_list(GOOGLE_VENDORS)
-        elif vendor == VENDORS[7]:
-            mac += get_random_vendor_from_list(CISCO_VENDORS)
-        mac += ':' + generate_hex_values_delimited_by_dotted(HexValuesLength.NIC)
-
+    
+    mac = generate_mac_for_vendor(vendor)
+    
     print(f"[+] [bold green]Spoofing your interface {interface} mac to {mac}\n")
     sleep(1)
-    spoof_new_mac_address(interface, mac)
-    print(f"\n[+] [bold green]Done.")
+    
+    spoof_mac_address(interface, mac)
+    print("\n[+] [bold green]Done.")
 
 
-def run_spoofer_logic(args) -> None:
+def run_spoofer_logic(args: SpooferArgs) -> None:
+    """Main entry point for the spoofer logic.
+    
+    Args:
+        args: Parsed command-line arguments
+    """
     if not shell_utils.check_for_admin():
         print("[-] [bold red]Needs root.")
         return
 
-    interface = args.i
+    interface = NetworkInterface(args.interface)
     
-    if args.ci:
-        unicast_mac_virtual_interface = generate_safe_unicast_mac() 
-        print(f"\n[CI] Spoofing {interface} to {unicast_mac_virtual_interface}")
-        spoof_new_mac_address(interface, unicast_mac_virtual_interface, user_confirm_iw_down=False)
-    elif args.auto:
-        print("\n[AUTO] Generating safe random unicast MAC address...")
-        auto_mac = generate_safe_unicast_mac()
-        print(f"\n[AUTO] Spoofing {interface} to {auto_mac}")
-        spoof_new_mac_address(interface, auto_mac, user_confirm_iw_down=False)
+    if args.ci or args.auto:
+        mode = "CI" if args.ci else "AUTO"
+        print(f"\n[{mode}] Generating safe random unicast MAC address...")
+        mac = generate_safe_unicast_mac()
+        print(f"\n[{mode}] Spoofing {interface} to {mac}")
+        spoof_mac_address(interface, mac, require_confirmation=False)
     else:
         run_tui(interface)
