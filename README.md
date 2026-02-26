@@ -4,6 +4,8 @@
 
 A command-line tool to spoof your network interface's MAC address on Linux systems.
 
+![MacSpoofer Demo](demo/demo.gif)
+
 ## What is a MAC Address?
 
 A **Media Access Control (MAC) address** is a unique identifier assigned to a network interface controller (NIC) for use as a network address in communications within a network segment. This identifier is used in most IEEE 802 networking technologies, including Ethernet, Wi-Fi, and Bluetooth.
