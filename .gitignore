@@ -3,4 +3,5 @@ manuf
 vendors/
 dist/
 build/
-*.egg-info/
+*.egg-info/
+macspoofer/_version.py

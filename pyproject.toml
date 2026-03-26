@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
@@ -42,7 +42,10 @@ Issues = "https://github.com/DanielKirshner/MacSpoofer/issues"
 macspoofer = "macspoofer.cli:main"
 
 [tool.hatch.version]
-path = "macspoofer/__init__.py"
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "macspoofer/_version.py"
 
 [tool.ruff]
 line-length = 100
