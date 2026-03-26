@@ -1,10 +1,12 @@
 # MAC Address Spoofer
 
 ![CI (master)](https://github.com/DanielKirshner/MacSpoofer/actions/workflows/linux-ci.yml/badge.svg?branch=master)
+![PyPI Version](https://img.shields.io/pypi/v/macspoofer)
+![PyPI Downloads](https://img.shields.io/pypi/dm/macspoofer)
 
 A command-line tool to spoof your network interface's MAC address on Linux systems.
 
-![MacSpoofer Demo](demo/demo.gif)
+![MacSpoofer Demo](https://raw.githubusercontent.com/DanielKirshner/MacSpoofer/master/demo/demo.gif)
 
 ## What is a MAC Address?
 
@@ -47,7 +49,7 @@ Tested on:
 ### Via pip (recommended)
 
 ```bash
-pip install macspoofer
+sudo pip install macspoofer
 ```
 
 ### From source
