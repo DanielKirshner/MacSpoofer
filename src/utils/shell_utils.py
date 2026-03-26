@@ -1,7 +1,7 @@
 """Shell command utilities for system-level operations."""
 
+import asyncio
 import getpass
-import subprocess
 
 from src.utils.exceptions import CustomException, ErrorCode
 
@@ -15,8 +15,8 @@ def check_for_admin() -> bool:
     return getpass.getuser() == "root"
 
 
-def execute_command(command_args: list[str]) -> None:
-    """Execute a shell command.
+async def execute_command(command_args: list[str]) -> None:
+    """Execute a shell command asynchronously.
 
     Args:
         command_args: List of command arguments to execute
@@ -30,10 +30,17 @@ def execute_command(command_args: list[str]) -> None:
             error_code=ErrorCode.COMMAND_EXECUTION_FAILED,
         )
 
-    result = subprocess.call(command_args)
+    process = await asyncio.create_subprocess_exec(
+        *command_args,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    stdout, stderr = await process.communicate()
 
-    if result != 0:
+    if process.returncode != 0:
+        error_output = stderr.decode().strip() if stderr else ""
         raise CustomException(
-            message=f"Command failed (exit {result}): {' '.join(command_args)}",
+            message=f"Command failed (exit {process.returncode}): {' '.join(command_args)}"
+            + (f"\n{error_output}" if error_output else ""),
             error_code=ErrorCode.COMMAND_EXECUTION_FAILED,
         )
