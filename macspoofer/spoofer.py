@@ -5,17 +5,17 @@ import asyncio
 import art
 from rich import print
 
-from src.modules.args_parser import SpooferArgs
-from src.modules.interface import NetworkInterface
-from src.utils import shell_utils
-from src.utils.exceptions import CustomException, ErrorCode
-from src.utils.random_utils import (
+from macspoofer.modules.args_parser import SpooferArgs
+from macspoofer.modules.interface import NetworkInterface
+from macspoofer.utils import shell_utils
+from macspoofer.utils.exceptions import CustomException, ErrorCode
+from macspoofer.utils.random_utils import (
     HexValuesLength,
     generate_hex_values_delimited_by_dotted,
     generate_safe_unicast_mac,
     get_random_vendor_from_list,
 )
-from src.utils.vendors import VendorRegistry
+from macspoofer.utils.vendors import VendorRegistry
 
 
 async def spoof_mac_address(

@@ -1,3 +1,6 @@
 __pycache__
 manuf
 vendors/
+dist/
+build/
+*.egg-info/

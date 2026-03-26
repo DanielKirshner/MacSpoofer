@@ -44,6 +44,14 @@ Tested on:
 
 ## Installation
 
+### Via pip (recommended)
+
+```bash
+pip install macspoofer
+```
+
+### From source
+
 ```bash
 chmod +x setup.sh
 sudo ./setup.sh
@@ -62,12 +70,16 @@ ip link show
 ### Interactive Mode (TUI)
 
 ```bash
+sudo macspoofer -i <interface>
+# or
 sudo python3 main.py -i <interface>
 ```
 
 ### Auto Mode (Non-Interactive)
 
 ```bash
+sudo macspoofer -i <interface> --auto
+# or
 sudo python3 main.py -i <interface> --auto
 ```
 

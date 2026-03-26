@@ -1,7 +1,48 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "macspoofer"
-version = "1.0.0"
+dynamic = ["version"]
+description = "A command-line tool to spoof your network interface's MAC address on Linux systems."
+readme = "README.md"
+license = "MIT"
 requires-python = ">=3.11"
+authors = [
+    { name = "Daniel Kirshner" },
+]
+keywords = ["mac", "spoofer", "network", "security", "linux", "mac-address"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: System :: Networking",
+    "Topic :: Security",
+]
+dependencies = [
+    "rich>=14.0.0",
+    "pretty-errors>=1.2.25",
+    "art>=6.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/DanielKirshner/MacSpoofer"
+Repository = "https://github.com/DanielKirshner/MacSpoofer"
+Issues = "https://github.com/DanielKirshner/MacSpoofer/issues"
+
+[project.scripts]
+macspoofer = "macspoofer.cli:main"
+
+[tool.hatch.version]
+path = "macspoofer/__init__.py"
 
 [tool.ruff]
 line-length = 100
@@ -21,7 +62,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["src"]
+known-first-party = ["macspoofer"]
 
 [tool.ruff.format]
 quote-style = "double"

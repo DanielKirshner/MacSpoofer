@@ -3,7 +3,7 @@
 import asyncio
 import getpass
 
-from src.utils.exceptions import CustomException, ErrorCode
+from macspoofer.utils.exceptions import CustomException, ErrorCode
 
 
 def check_for_admin() -> bool:

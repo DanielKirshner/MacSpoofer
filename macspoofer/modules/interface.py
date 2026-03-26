@@ -4,8 +4,8 @@ import contextlib
 from collections.abc import AsyncIterator
 from enum import StrEnum
 
-from src.utils import shell_utils
-from src.utils.exceptions import CustomException, ErrorCode
+from macspoofer.utils import shell_utils
+from macspoofer.utils.exceptions import CustomException, ErrorCode
 
 
 class InterfaceState(StrEnum):
