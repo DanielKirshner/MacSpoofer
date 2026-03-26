@@ -1,6 +1,6 @@
 """MAC Address Spoofer - Core spoofing logic and TUI."""
 
-from time import sleep
+import asyncio
 
 import art
 from rich import print
@@ -18,15 +18,15 @@ from src.utils.random_utils import (
 from src.utils.vendors import VendorRegistry
 
 
-def spoof_mac_address(
+async def spoof_mac_address(
     interface: NetworkInterface,
     mac: str,
     require_confirmation: bool = True,
 ) -> None:
     """Spoof the MAC address of a network interface.
 
-    This function temporarily brings the interface down, changes its MAC address,
-    and brings it back up.
+    Temporarily brings the interface down via an async context manager,
+    changes its MAC address, then brings it back up.
 
     Args:
         interface: NetworkInterface instance to spoof
@@ -41,18 +41,16 @@ def spoof_mac_address(
     if require_confirmation:
         input("Press Enter to continue or Ctrl+C to terminate -> ")
 
-    print(f"\n[+] [bold green]Turning {interface} OFF...")
-    sleep(1)
-    interface.down()
+    async with interface.disable_temporarily():
+        print(f"\n[+] [bold green]Turning {interface} OFF...")
+        await asyncio.sleep(1)
 
-    print(f"\n[+] [bold green]Spoofing {interface} mac...")
-    sleep(1)
-    interface.set_mac_address(mac)
+        print(f"\n[+] [bold green]Spoofing {interface} mac...")
+        await asyncio.sleep(1)
+        await interface.set_mac_address(mac)
 
-    sleep(1)
     print(f"\n[+] [bold green]Turning {interface} back ON...")
-    sleep(1)
-    interface.up()
+    await asyncio.sleep(1)
 
 
 def choose_vendor() -> str:
@@ -94,7 +92,7 @@ def generate_mac_for_vendor(vendor: str) -> str:
     return f"{oui}:{nic}"
 
 
-def run_tui(interface: NetworkInterface) -> None:
+async def run_tui(interface: NetworkInterface) -> None:
     """Run the text-based user interface for MAC spoofing.
 
     Args:
@@ -104,18 +102,18 @@ def run_tui(interface: NetworkInterface) -> None:
 
     vendor = choose_vendor()
     print("[+] [bold green]Generating random mac according to your request...\n")
-    sleep(1)
+    await asyncio.sleep(1)
 
     mac = generate_mac_for_vendor(vendor)
 
     print(f"[+] [bold green]Spoofing your interface {interface} mac to {mac}\n")
-    sleep(1)
+    await asyncio.sleep(1)
 
-    spoof_mac_address(interface, mac)
+    await spoof_mac_address(interface, mac)
     print("\n[+] [bold green]Done.")
 
 
-def run_spoofer_logic(args: SpooferArgs) -> None:
+async def run_spoofer_logic(args: SpooferArgs) -> None:
     """Main entry point for the spoofer logic.
 
     Args:
@@ -137,6 +135,6 @@ def run_spoofer_logic(args: SpooferArgs) -> None:
         print(f"\n[{mode}] Generating safe random unicast MAC address...")
         mac = generate_safe_unicast_mac()
         print(f"\n[{mode}] Spoofing {interface} to {mac}")
-        spoof_mac_address(interface, mac, require_confirmation=False)
+        await spoof_mac_address(interface, mac, require_confirmation=False)
     else:
-        run_tui(interface)
+        await run_tui(interface)
