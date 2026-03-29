@@ -3,6 +3,8 @@
 import argparse
 from dataclasses import dataclass
 
+import art
+
 VERSION = "0.0.0"
 
 
@@ -23,8 +25,9 @@ class ArgumentParser:
 
     def _create_parser(self) -> argparse.ArgumentParser:
         """Create and configure the argument parser."""
+        banner = art.text2art("Spoofer")
         parser = argparse.ArgumentParser(
-            description="MAC Address Spoofer - Change your network interface MAC address",
+            description=f"{banner}MAC Address Spoofer : Change your network interface MAC address",
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
         self._add_arguments(parser)
