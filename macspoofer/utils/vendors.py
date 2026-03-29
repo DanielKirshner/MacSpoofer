@@ -9,7 +9,9 @@ from __future__ import annotations
 import json
 import os
 
-_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "vendors.json")
+_DATA_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "vendors.json"
+)
 
 
 def _load_vendor_db() -> dict[str, list[str]]:
