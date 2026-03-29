@@ -53,22 +53,76 @@ async def spoof_mac_address(
     await asyncio.sleep(1)
 
 
+def _search_vendor() -> str | None:
+    """Interactive vendor search across the full database.
+
+    Returns:
+        Selected vendor name, or None if the user backs out.
+    """
+    total = VendorRegistry.vendor_count()
+    print(
+        f"\n[bold magenta]Search across {total:,} vendors (e.g. Raspberry Pi, Netgear, Ubiquiti):\n"
+    )
+    query = input("search -> ").strip()
+    if not query:
+        return None
+
+    results = VendorRegistry.search(query)
+    if not results:
+        print("[bold red]No vendors found. Try a different search term.\n")
+        return None
+
+    oui_map = VendorRegistry.get_oui_map()
+    options = "\n".join(
+        f"[bold green][{i}] [cyan]{name} [dim]({len(oui_map[name])} OUIs)"
+        for i, name in enumerate(results)
+    )
+    print(f"\n[bold magenta]Search results:\n\n{options}\n")
+
+    user_input = input("select (or Enter to go back) -> ").strip()
+    if not user_input:
+        return None
+
+    while not user_input.isdigit() or int(user_input) >= len(results):
+        user_input = input("Invalid choice, try again -> ").strip()
+        if not user_input:
+            return None
+
+    return results[int(user_input)]
+
+
 def choose_vendor() -> str:
     """Display vendor options and get user selection.
+
+    Shows featured vendors as numbered choices plus a search option
+    that queries the full database (~19k vendors).
 
     Returns:
         The selected vendor name
     """
     vendors = VendorRegistry.NAMES
+    search_idx = len(vendors)
+
     options = "\n".join(f"[bold green][{i}] [cyan]{vendor}" for i, vendor in enumerate(vendors))
+    options += f"\n[bold green][{search_idx}] [yellow]Search all vendors..."
     print(f"[bold magenta]Enter your choice:\n\n{options}\n")
 
     user_input = input("-> ").strip()
+    while True:
+        if user_input.isdigit() and int(user_input) <= search_idx:
+            choice = int(user_input)
 
-    while not user_input.isdigit() or int(user_input) >= len(vendors):
-        user_input = input("Invalid choice, try again-> ").strip()
+            if choice == search_idx:
+                result = _search_vendor()
+                if result is not None:
+                    return result
+                print(f"[bold magenta]Enter your choice:\n\n{options}\n")
+                user_input = input("-> ").strip()
+                continue
 
-    return vendors[int(user_input)]
+            return vendors[choice]
+
+        user_input = input("Invalid choice, try again -> ").strip()
 
 
 def generate_mac_for_vendor(vendor: str) -> str:
