@@ -49,7 +49,7 @@ Tested on:
 ### Via pip (recommended)
 
 ```bash
-sudo pip install macspoofer
+pip install macspoofer
 ```
 
 ### From source
@@ -72,9 +72,9 @@ ip link show
 ### Interactive Mode (TUI)
 
 ```bash
-sudo macspoofer -i <interface>
+sudo -E macspoofer -i <interface>
 # or
-sudo python3 main.py -i <interface>
+sudo -E python3 main.py -i <interface>
 ```
 
 ### Auto Mode (Non-Interactive)
