@@ -13,10 +13,15 @@ from macspoofer.utils.exceptions import CustomException
 
 async def _async_main() -> None:
     """Async application entry point."""
+    configure_pretty_errors()
+    args = ArgumentParser().parse_args()
+    await run_spoofer_logic(args)
+
+
+def main() -> None:
+    """Synchronous wrapper for the CLI entry point (used by pyproject.toml scripts)."""
     try:
-        configure_pretty_errors()
-        args = ArgumentParser().parse_args()
-        await run_spoofer_logic(args)
+        asyncio.run(_async_main())
     except KeyboardInterrupt:
         print("\n[-] [bold red]Stopped.")
     except CustomException as e:
@@ -25,11 +30,6 @@ async def _async_main() -> None:
         print("\n[-] [bold red]Missing one of the pip packages.")
     except Exception as e:
         print(f"\n[-] [bold red]Error occurred: {e}")
-
-
-def main() -> None:
-    """Synchronous wrapper for the CLI entry point (used by pyproject.toml scripts)."""
-    asyncio.run(_async_main())
 
 
 if __name__ == "__main__":
