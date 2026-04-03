@@ -1,6 +1,7 @@
 """Network interface management for MAC spoofing."""
 
 import contextlib
+import os
 from collections.abc import AsyncIterator
 from enum import StrEnum
 
@@ -30,7 +31,15 @@ class NetworkInterface:
 
         Args:
             name: The interface name (e.g., 'eth0', 'wlan0')
+
+        Raises:
+            CustomException: If the interface does not exist
         """
+        if not os.path.exists(f"/sys/class/net/{name}"):
+            raise CustomException(
+                message=f"Network interface '{name}' does not exist",
+                error_code=ErrorCode.INTERFACE_NOT_FOUND,
+            )
         self.name = name
 
     async def set_state(self, state: InterfaceState) -> None:
