@@ -80,9 +80,9 @@ sudo -E python3 main.py -i <interface>
 ### Auto Mode (Non-Interactive)
 
 ```bash
-sudo macspoofer -i <interface> --auto
+sudo -E macspoofer -i <interface> --auto
 # or
-sudo python3 main.py -i <interface> --auto
+sudo -E python3 main.py -i <interface> --auto
 ```
 
 ### Command Line Options
