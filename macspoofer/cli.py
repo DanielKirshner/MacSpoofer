@@ -26,8 +26,6 @@ def main() -> None:
         print("\n[-] [bold red]Stopped.")
     except CustomException as e:
         print(f"\n[-] [bold red]{e}")
-    except ModuleNotFoundError:
-        print("\n[-] [bold red]Missing one of the pip packages.")
     except Exception as e:
         print(f"\n[-] [bold red]Error occurred: {e}")
 
