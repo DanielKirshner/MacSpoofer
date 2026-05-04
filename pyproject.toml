@@ -48,6 +48,10 @@ source = "vcs"
 [tool.hatch.build.hooks.vcs]
 version-file = "macspoofer/_version.py"
 
+[tool.hatch.build.targets.wheel]
+packages = ["macspoofer"]
+include = ["macspoofer/data/vendors.json"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"
