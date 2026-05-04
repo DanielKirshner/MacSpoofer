@@ -95,13 +95,60 @@ sudo -E python3 main.py -i <interface> --auto
 | `--help` | Show help message and usage examples |
 | `--version` | Show version information |
 
+### Programmatic Usage
 
-## Resources
+You can also use `macspoofer` as a Python library:
 
-- [MAC Vendor Lookup API](https://macvendors.com/) - Look up manufacturer by MAC address
-- [Wireshark Vendor Database](https://github.com/wireshark/wireshark/blob/master/manuf) - Comprehensive list of known manufacturers
+#### Generate a Random MAC Address
 
-> 💡 Want more vendors? Feel free to open a PR to add more vendor OUIs!
+```python
+from macspoofer.utils.random_utils import generate_safe_unicast_mac
+
+mac = generate_safe_unicast_mac()
+print(mac)  # e.g. "a6:3f:12:cb:90:01"
+```
+
+#### Search & Browse Vendors
+
+```python
+from macspoofer.utils.vendors import VendorRegistry
+
+# Total vendors in the database
+print(VendorRegistry.vendor_count())
+
+# Search by name (case-insensitive)
+results = VendorRegistry.search("Raspberry")
+print(results)
+
+# Get OUI prefixes for a specific vendor
+ouis = VendorRegistry.get_ouis_for_vendor("Apple")
+print(ouis[:3])  # ['58:e6:ba', '8c:98:6b', ...]
+```
+
+#### Generate a Vendor-Specific MAC
+
+```python
+from macspoofer.spoofer import generate_mac_for_vendor
+
+mac = generate_mac_for_vendor("Samsung")
+print(mac)  # e.g. "e4:7a:11:2f:c8:5d"
+```
+
+#### Spoof an Interface (requires root)
+
+```python
+import asyncio
+from macspoofer.modules.interface import NetworkInterface
+from macspoofer.spoofer import spoof_mac_address
+from macspoofer.utils.random_utils import generate_safe_unicast_mac
+
+async def main():
+    interface = NetworkInterface("wlan0")
+    mac = generate_safe_unicast_mac()
+    await spoof_mac_address(interface, mac, require_confirmation=False)
+
+asyncio.run(main())
+```
 
 ## License
 
