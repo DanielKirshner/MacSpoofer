@@ -71,3 +71,31 @@ jobs:
           else
             echo "MAC Spoofed successfully!"
           fi
+
+  build:
+    name: Build Wheel
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install build tools
+        run: pip install build
+
+      - name: Build wheel and sdist
+        run: python -m build
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macspoofer-wheel
+          path: dist/*.whl
+          if-no-files-found: error
