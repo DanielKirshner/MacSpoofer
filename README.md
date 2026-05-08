@@ -34,16 +34,6 @@ A MAC address is a **12-digit hexadecimal number** (6 bytes), typically represen
 - ⚡ **Auto mode** - Non-interactive operation for scripts
 - 🔧 **CI mode** - Designed for automated testing pipelines
 
-## Compatibility
-
-The tool is compatible with **Linux distributions only**.
-
-Tested on:
-- **Ubuntu** - 16.04.7, 18.04.6, 20.04.6, 22.04.5, 24.04.2
-- **Debian** - 8, 9, 10, 11, 12
-- **Kali** - 2021.4a, 2022.4, 2023.4, 2024.4, 2025.1
-- **Raspbian** - 8, 9, 10, 11, 12
-
 ## Installation
 
 ### Via pip (recommended)
