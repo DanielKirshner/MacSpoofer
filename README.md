@@ -59,6 +59,18 @@ chmod +x setup.sh
 sudo ./setup.sh
 ```
 
+### From a CI build artifact
+
+Every run of the [MacSpoofer CI workflow](https://github.com/DanielKirshner/MacSpoofer/actions/workflows/linux-ci.yml) builds the package and uploads the resulting wheel as a GitHub Actions artifact named `macspoofer-wheel`. To install a pre-release build:
+
+1. Open the relevant workflow run on the Actions tab.
+2. Download the `macspoofer-wheel` artifact and unzip it.
+3. Install the wheel with `pip`:
+
+```bash
+pip install ./macspoofer-*.whl
+```
+
 ## Usage
 
 ### Find Your Interface Name
