@@ -34,6 +34,11 @@ dependencies = [
     "art>=6.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.15.12",
+]
+
 [project.urls]
 Homepage = "https://github.com/DanielKirshner/MacSpoofer"
 Repository = "https://github.com/DanielKirshner/MacSpoofer"
