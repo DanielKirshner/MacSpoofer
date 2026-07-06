@@ -41,11 +41,41 @@ jobs:
           sudo chmod +x setup.sh
           sudo ./setup.sh
 
-      - name: Create dummy interface (wlan0)
+      - name: Create test interface (wlan0)
         run: |
-          sudo ip link add wlan0 type dummy
+          # Prefer a virtual mac80211 radio over a plain dummy link: it registers
+          # a real wireless interface (wlan0), so the spoofer exercises the same
+          # mac80211 code path a physical WiFi adapter would hit. mac80211_hwsim
+          # ships in linux-modules-extra, which is absent on the runner by default
+          # and occasionally not yet mirrored for a fresh runner kernel — so if it
+          # can't be loaded we fall back to a dummy interface to keep CI green.
+
+          setup_hwsim() {
+            sudo apt-get update -qq || return 1
+            sudo apt-get install -y "linux-modules-extra-$(uname -r)" || return 1
+            sudo modprobe mac80211_hwsim radios=1 || return 1
+
+            # Wait for the kernel to register wlan0 before using it.
+            for _ in $(seq 1 10); do
+              [ -e /sys/class/net/wlan0 ] && return 0
+              sleep 1
+            done
+            return 1
+          }
+
+          if setup_hwsim; then
+            # hwsim radios can come up rfkill soft-blocked, which blocks link up.
+            sudo rfkill unblock all || true
+            echo "IFACE_KIND=virtual WiFi (mac80211_hwsim)"
+          else
+            echo "mac80211_hwsim unavailable; falling back to a dummy interface." >&2
+            sudo modprobe -r mac80211_hwsim 2>/dev/null || true
+            sudo ip link add wlan0 type dummy
+            echo "IFACE_KIND=dummy"
+          fi
+
           sudo ip link set wlan0 up
-          echo "Created dummy interface:"
+          echo "Created test interface:"
           ip link show wlan0
 
       - name: Get initial MAC
@@ -56,7 +86,7 @@ jobs:
 
       - name: Run MacSpoofer in CI mode
         run: |
-          echo "Spoofing MAC on dummy wlan0..."
+          echo "Spoofing MAC on wlan0..."
           sudo python3 ./main.py -i wlan0 --ci
 
       - name: Verify MAC change
@@ -71,6 +101,13 @@ jobs:
           else
             echo "MAC Spoofed successfully!"
           fi
+
+      - name: Tear down test interface
+        if: always()
+        run: |
+          # Works for both paths: unload the hwsim module if it's loaded,
+          # otherwise remove the dummy link. Neither failing should fail CI.
+          sudo modprobe -r mac80211_hwsim 2>/dev/null || sudo ip link delete wlan0 2>/dev/null || true
 
   build:
     name: Build Wheel
