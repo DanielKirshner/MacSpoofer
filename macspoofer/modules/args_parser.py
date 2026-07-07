@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 import art
 
-VERSION = "1.0.7"
+VERSION = "1.0.8"
 
 
 @dataclass
