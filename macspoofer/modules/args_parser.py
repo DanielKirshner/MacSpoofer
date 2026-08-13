@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 import art
 
-VERSION = "1.0.8"
+from macspoofer import __version__
 
 
 @dataclass
@@ -57,7 +57,7 @@ class ArgumentParser:
         parser.add_argument(
             "--version",
             action="version",
-            version=f"MAC Address Spoofer v{VERSION}",
+            version=f"MAC Address Spoofer v{__version__}",
         )
 
     def parse_args(self) -> SpooferArgs:

@@ -144,10 +144,12 @@ from macspoofer.modules.interface import NetworkInterface
 from macspoofer.spoofer import spoof_mac_address
 from macspoofer.utils.random_utils import generate_safe_unicast_mac
 
+
 async def main():
     interface = NetworkInterface("wlan0")
     mac = generate_safe_unicast_mac()
     await spoof_mac_address(interface, mac, require_confirmation=False)
+
 
 asyncio.run(main())
 ```
