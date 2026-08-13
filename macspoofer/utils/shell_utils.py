@@ -1,18 +1,22 @@
 """Shell command utilities for system-level operations."""
 
 import asyncio
-import getpass
+import os
 
 from macspoofer.utils.exceptions import CustomException, ErrorCode
 
 
 def check_for_admin() -> bool:
-    """Check if the current user has root/admin privileges.
+    """Check if the current process has root/admin privileges.
+
+    Uses the effective user ID rather than the username, so it stays correct
+    under ``sudo -E`` (which preserves ``$USER``/``$LOGNAME`` for the original
+    caller even though the process runs as root).
 
     Returns:
         True if running as root, False otherwise
     """
-    return getpass.getuser() == "root"
+    return os.geteuid() == 0
 
 
 async def execute_command(command_args: list[str]) -> None:
