@@ -19,15 +19,18 @@ async def _async_main() -> None:
 
 
 def main() -> None:
-    """Synchronous wrapper for the CLI entry point (used by pyproject.toml scripts)."""
+    """Synchronous wrapper for the CLI entry point (used by pyproject.toml scripts).
+
+    Only expected failures are reported as a plain message. Anything else is a
+    bug, and is left to propagate so the rich traceback handler installed by
+    configure_tracebacks() can show where it came from.
+    """
     try:
         asyncio.run(_async_main())
     except KeyboardInterrupt:
         print("\n[-] [bold red]Stopped.")
     except CustomException as e:
         print(f"\n[-] [bold red]{e}")
-    except Exception as e:
-        print(f"\n[-] [bold red]Error occurred: {e}")
 
 
 if __name__ == "__main__":
