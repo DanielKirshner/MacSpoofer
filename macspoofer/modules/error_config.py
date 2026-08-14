@@ -1,18 +1,12 @@
-"""Pretty error output configuration."""
+"""Traceback formatting configuration."""
 
-import pretty_errors
+from rich.traceback import install
 
 
-def configure_pretty_errors() -> None:
-    """Configure pretty_errors for enhanced error display.
+def configure_tracebacks() -> None:
+    """Install rich as the handler for uncaught exception tracebacks.
 
-    Sets up formatting options for better error readability including
-    separator characters, full filename display, and context lines.
+    Shows local variable values and three lines of surrounding context per
+    frame, for better error readability.
     """
-    pretty_errors.configure(
-        separator_character="*",
-        filename_display=pretty_errors.FILENAME_FULL,
-        line_color=pretty_errors.RED + "> " + pretty_errors.default_config.line_color,
-        lines_before=3,
-        lines_after=3,
-    )
+    install(show_locals=True, extra_lines=3)

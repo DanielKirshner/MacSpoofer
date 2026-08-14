@@ -6,14 +6,14 @@ import asyncio
 from rich import print
 
 from macspoofer.modules.args_parser import ArgumentParser
-from macspoofer.modules.error_config import configure_pretty_errors
+from macspoofer.modules.error_config import configure_tracebacks
 from macspoofer.spoofer import run_spoofer_logic
 from macspoofer.utils.exceptions import CustomException
 
 
 async def _async_main() -> None:
     """Async application entry point."""
-    configure_pretty_errors()
+    configure_tracebacks()
     args = ArgumentParser().parse_args()
     await run_spoofer_logic(args)
 
