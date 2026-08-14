@@ -30,7 +30,6 @@ classifiers = [
 ]
 dependencies = [
     "rich>=14.0.0",
-    "pretty-errors>=1.2.25",
     "art>=6.0",
 ]
 

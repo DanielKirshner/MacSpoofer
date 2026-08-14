@@ -1,3 +1,2 @@
 rich==15.0.0
-pretty-errors==1.2.25
 art==6.5
