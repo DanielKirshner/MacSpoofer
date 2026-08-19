@@ -92,15 +92,40 @@ class NetworkInterface:
     async def disable_temporarily(self) -> AsyncIterator[None]:
         """Async context manager to temporarily bring the interface down and back up.
 
+        If bringing the interface back up fails, the interface is left down and
+        the user has no connectivity, so that failure takes over the reported
+        error, but it carries the original body failure along in its message
+        instead of hiding it.
+
         Usage:
             async with interface.disable_temporarily():
                 await interface.set_mac_address(new_mac)
+
+        Raises:
+            CustomException: If the interface cannot be brought back up
         """
+        await self.down()
+
+        body_error: BaseException | None = None
         try:
-            await self.down()
             yield
+        except BaseException as err:
+            body_error = err
+            raise
         finally:
-            await self.up()
+            try:
+                await self.up()
+            except CustomException as restore_err:
+                message = (
+                    f"Interface {self.name} was left DOWN and could not be brought back up. "
+                    f"Restore it manually with: ip link set dev {self.name} up"
+                )
+                if body_error is not None:
+                    message += f"\nThe failure that triggered this was: {body_error}"
+                raise CustomException(
+                    message=message,
+                    error_code=ErrorCode.INTERFACE_RESTORE_FAILED,
+                ) from restore_err
 
     def __str__(self) -> str:
         return self.name
