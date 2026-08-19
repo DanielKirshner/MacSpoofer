@@ -4,12 +4,27 @@ from enum import IntEnum
 
 
 class ErrorCode(IntEnum):
-    FAILED_TO_CREATE_LOGGER_FOLDER = 1000
-    FAILED_TO_SETUP_LOGGER = 1001
-    COMMAND_EXECUTION_FAILED = 1002
-    INTERFACE_NOT_FOUND = 1003
-    INTERFACE_STATE_FAILED = 1004
-    MAC_SPOOF_FAILED = 1005
+    """Error codes for expected MacSpoofer failures, grouped by subsystem."""
+
+    # Shell command execution
+    COMMAND_EXECUTION_FAILED = 1000
+    COMMAND_NOT_FOUND = 1001
+
+    # Environment prerequisites
+    NOT_ROOT = 1002
+    UNSUPPORTED_PLATFORM = 1003
+
+    # Network interface handling
+    INTERFACE_NOT_FOUND = 1004
+    INTERFACE_STATE_FAILED = 1005
+    INTERFACE_RESTORE_FAILED = 1006
+
+    # MAC address spoofing
+    MAC_SPOOF_FAILED = 1007
+    MAC_SPOOF_NOT_APPLIED = 1008
+
+    # Bundled data
+    VENDOR_DB_LOAD_FAILED = 1009
 
 
 class CustomException(Exception):
