@@ -2,8 +2,23 @@
 
 import asyncio
 import os
+import sys
 
 from macspoofer.utils.exceptions import CustomException, ErrorCode
+
+
+def check_for_linux() -> bool:
+    """Check if the current platform is Linux.
+
+    Every system facility this tool relies on is Linux-specific:
+    ``/sys/class/net`` for interface discovery, ``ip`` from iproute2 for the
+    actual changes, and ``os.geteuid`` for the privilege check (which does not
+    exist on Windows at all).
+
+    Returns:
+        True if running on Linux, False otherwise
+    """
+    return sys.platform.startswith("linux")
 
 
 def check_for_admin() -> bool:

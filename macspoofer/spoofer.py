@@ -1,6 +1,7 @@
 """MAC Address Spoofer - Core spoofing logic and TUI."""
 
 import asyncio
+import sys
 
 import art
 from rich import print
@@ -174,12 +175,19 @@ async def run_spoofer_logic(args: SpooferArgs) -> None:
         args: Parsed command-line arguments
 
     Raises:
-        CustomException: If not running as root
+        CustomException: If the platform is not Linux, or not running as root
     """
+    # Checked before the privilege check, which itself relies on os.geteuid.
+    if not shell_utils.check_for_linux():
+        raise CustomException(
+            message=f"MacSpoofer only supports Linux, but this is '{sys.platform}'",
+            error_code=ErrorCode.UNSUPPORTED_PLATFORM,
+        )
+
     if not shell_utils.check_for_admin():
         raise CustomException(
             message="This tool must be run as root (sudo)",
-            error_code=ErrorCode.COMMAND_EXECUTION_FAILED,
+            error_code=ErrorCode.NOT_ROOT,
         )
 
     interface = NetworkInterface(args.interface)
