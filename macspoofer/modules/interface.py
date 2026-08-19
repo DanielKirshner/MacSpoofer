@@ -8,6 +8,8 @@ from enum import StrEnum
 from macspoofer.utils import shell_utils
 from macspoofer.utils.exceptions import CustomException, ErrorCode
 
+SYSFS_NET_PATH = "/sys/class/net"
+
 
 class InterfaceState(StrEnum):
     """Network interface state values."""
@@ -35,7 +37,7 @@ class NetworkInterface:
         Raises:
             CustomException: If the interface does not exist
         """
-        if not os.path.exists(f"/sys/class/net/{name}"):
+        if not os.path.exists(f"{SYSFS_NET_PATH}/{name}"):
             raise CustomException(
                 message=f"Network interface '{name}' does not exist",
                 error_code=ErrorCode.INTERFACE_NOT_FOUND,
@@ -67,16 +69,32 @@ class NetworkInterface:
         """Bring the interface down."""
         await self.set_state(InterfaceState.DOWN)
 
+    def read_mac_address(self) -> str | None:
+        """Read the interface's current MAC address from sysfs.
+
+        Returns:
+            The MAC address in lowercase, or None if it could not be read
+        """
+        try:
+            with open(f"{SYSFS_NET_PATH}/{self.name}/address", encoding="utf-8") as address_file:
+                return address_file.read().strip().lower()
+        except OSError:
+            return None
+
     async def set_mac_address(self, mac: str) -> None:
         """Set the MAC address of the interface.
 
         Note: The interface should be down before changing the MAC address.
 
+        The change is verified by reading the address back, because some drivers
+        exit zero while silently keeping the original address.
+
         Args:
             mac: New MAC address (format: 'xx:xx:xx:xx:xx:xx')
 
         Raises:
-            CustomException: If setting the MAC address fails
+            CustomException: If setting the MAC address fails, or if the
+                interface still reports its previous address afterwards
         """
         try:
             await shell_utils.execute_command(
@@ -87,6 +105,16 @@ class NetworkInterface:
                 message=f"Failed to set MAC address {mac} on {self.name}",
                 error_code=ErrorCode.MAC_SPOOF_FAILED,
             ) from err
+
+        current_mac = self.read_mac_address()
+        if current_mac is not None and current_mac != mac.lower():
+            raise CustomException(
+                message=(
+                    f"Interface {self.name} still reports {current_mac} after setting {mac}; "
+                    "the driver accepted the command but did not apply the change"
+                ),
+                error_code=ErrorCode.MAC_SPOOF_NOT_APPLIED,
+            )
 
     @contextlib.asynccontextmanager
     async def disable_temporarily(self) -> AsyncIterator[None]:
