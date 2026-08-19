@@ -44,7 +44,9 @@ class CustomException(Exception):
         return self._message
 
     def __str__(self) -> str:
-        return f"[Error {self._error_code}] {self._message}"
+        # IntEnum stringifies to the bare number, which is useless in a bug
+        # report, so spell out the name alongside it.
+        return f"[Error {self._error_code.name} ({self._error_code.value})] {self._message}"
 
     def __repr__(self) -> str:
-        return f"CustomException(message='{self._message}', error_code={self._error_code})"
+        return f"CustomException(message='{self._message}', error_code={self._error_code!r})"
