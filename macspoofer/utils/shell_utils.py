@@ -26,19 +26,26 @@ async def execute_command(command_args: list[str]) -> None:
         command_args: List of command arguments to execute
 
     Raises:
-        CustomException: If command_args is empty or the command exits non-zero
+        ValueError: If command_args is empty (a programming error, not a
+            runtime failure)
+        CustomException: If the executable is unavailable or the command
+            exits non-zero
     """
     if not command_args:
-        raise CustomException(
-            message="execute_command called with no arguments",
-            error_code=ErrorCode.COMMAND_EXECUTION_FAILED,
-        )
+        raise ValueError("execute_command called with no arguments")
 
-    process = await asyncio.create_subprocess_exec(
-        *command_args,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
-    )
+    try:
+        process = await asyncio.create_subprocess_exec(
+            *command_args,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+    except (FileNotFoundError, PermissionError) as err:
+        raise CustomException(
+            message=f"Cannot execute '{command_args[0]}': {err.strerror}",
+            error_code=ErrorCode.COMMAND_NOT_FOUND,
+        ) from err
+
     stdout, stderr = await process.communicate()
 
     if process.returncode != 0:
